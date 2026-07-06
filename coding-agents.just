@@ -1,0 +1,93 @@
+#!/usr/bin/env -S just --justfile
+
+# vim: set tabstop=4 shiftwidth=4 expandtab :
+
+set shell := ["bash", "-euo", "pipefail", "-c"]
+
+service := "coding-agents"
+
+default:
+    @just --justfile {{ justfile() }} --list --unsorted
+
+docker-compose args='':
+    compose_dir="$(dirname "$(readlink -f "{{ justfile() }}")")"; \
+    compose_files=(-f "$compose_dir/docker-compose.yml"); \
+    if [ -n "${DISPLAY:-}" ] && [ -d /tmp/.X11-unix ]; then \
+        compose_files+=(-f "$compose_dir/docker-compose.x11.yml"); \
+    fi; \
+    docker compose "${compose_files[@]}" {{ args }}
+
+test:
+    echo {{ invocation_directory_native() }}
+
+build:
+    just --justfile {{ justfile() }} docker-compose build 
+
+rm:
+    just --justfile {{ justfile() }} docker-compose 'rm coding-agents'
+
+run *cmd="":
+    just --justfile {{ justfile() }} docker-compose 'run --rm {{ service }} {{ cmd }}'
+
+shell:
+    just --justfile {{ justfile() }} run zsh
+
+opencode *args="":
+    TARGET_DIR="{{ invocation_directory_native() }}" just --justfile {{ justfile() }} run 'opencode {{ args }}'
+
+opencode-acp:
+    TARGET_DIR="{{ invocation_directory_native() }}" just --justfile {{ justfile() }} run 'opencode acp'
+
+claude *args="":
+    TARGET_DIR="{{ invocation_directory_native() }}" \
+    HTTP_PROXY="http://127.0.0.1:8014" \
+    HTTPS_PROXY="http://127.0.0.1:8014" \
+    NO_PROXY="localhost,127.0.0.1,::1,0.0.0.0,10.0.0.0/8,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.168.0.0/16,fc00::/7,fe80::/10,host.docker.internal,.lan,.local,.ru,.su" \
+    TZ="Asia/Singapore" \
+    LANG="en_SG.UTF-8" \
+    LC_ALL="en_SG.UTF-8" \
+    just --justfile {{ justfile() }} run 'claude {{ args }}'
+
+codex *args="":
+    TARGET_DIR="{{ invocation_directory_native() }}" \
+    HTTP_PROXY="http://127.0.0.1:8014" \
+    HTTPS_PROXY="http://127.0.0.1:8014" \
+    NO_PROXY="localhost,127.0.0.1,::1,0.0.0.0,10.0.0.0/8,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.168.0.0/16,fc00::/7,fe80::/10,host.docker.internal,.lan,.local,.ru,.su" \
+    TZ="Asia/Singapore" \
+    LANG="en_SG.UTF-8" \
+    LC_ALL="en_SG.UTF-8" \
+    just --justfile {{ justfile() }} run 'codex {{ args }}'
+
+claude-at workdir *args="":
+    workspace_dir="{{ invocation_directory_native() }}"; \
+    target_dir="$(realpath -m "$workspace_dir/{{ workdir }}")"; \
+    case "$target_dir/" in \
+        "$workspace_dir"/*) ;; \
+        *) echo "claude-at workdir must be inside $workspace_dir: $target_dir" >&2; exit 1 ;; \
+    esac; \
+    WORKSPACE_DIR="$workspace_dir" \
+    TARGET_DIR="$target_dir" \
+    HTTP_PROXY="http://127.0.0.1:8014" \
+    HTTPS_PROXY="http://127.0.0.1:8014" \
+    NO_PROXY="localhost,127.0.0.1,::1,0.0.0.0,10.0.0.0/8,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.168.0.0/16,fc00::/7,fe80::/10,host.docker.internal,.lan,.local,.ru,.su" \
+    TZ="Asia/Singapore" \
+    LANG="en_SG.UTF-8" \
+    LC_ALL="en_SG.UTF-8" \
+    just --justfile {{ justfile() }} run 'claude {{ args }}'
+
+codex-at workdir *args="":
+    workspace_dir="{{ invocation_directory_native() }}"; \
+    target_dir="$(realpath -m "$workspace_dir/{{ workdir }}")"; \
+    case "$target_dir/" in \
+        "$workspace_dir"/*) ;; \
+        *) echo "codex-at workdir must be inside $workspace_dir: $target_dir" >&2; exit 1 ;; \
+    esac; \
+    WORKSPACE_DIR="$workspace_dir" \
+    TARGET_DIR="$target_dir" \
+    HTTP_PROXY="http://127.0.0.1:8014" \
+    HTTPS_PROXY="http://127.0.0.1:8014" \
+    NO_PROXY="localhost,127.0.0.1,::1,0.0.0.0,10.0.0.0/8,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.168.0.0/16,fc00::/7,fe80::/10,host.docker.internal,.lan,.local,.ru,.su" \
+    TZ="Asia/Singapore" \
+    LANG="en_SG.UTF-8" \
+    LC_ALL="en_SG.UTF-8" \
+    just --justfile {{ justfile() }} run 'codex {{ args }}'

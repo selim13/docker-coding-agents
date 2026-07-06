@@ -1,0 +1,100 @@
+name: "coding-agents"
+
+services:
+  coding-agents:
+    build:
+      context: .
+      args:
+        HTTP_PROXY: "${BUILD_PROXY:-}"
+        HTTPS_PROXY: "${BUILD_PROXY:-}"
+        INSTALL_CHROME: "false"
+        NO_PROXY: "${NO_PROXY:-localhost,127.0.0.1,::1,0.0.0.0,10.0.0.0/8,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.168.0.0/16,fc00::/7,fe80::/10,host.docker.internal,.lan,.local,.ru,.su}"
+        http_proxy: "${BUILD_PROXY:-}"
+        https_proxy: "${BUILD_PROXY:-}"
+        no_proxy: "${no_proxy:-${NO_PROXY:-localhost,127.0.0.1,::1,0.0.0.0,10.0.0.0/8,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.168.0.0/16,fc00::/7,fe80::/10,host.docker.internal,.lan,.local,.ru,.su}}"
+    image: coding-agents:latest
+    volumes:
+      - "${HOME}/.config/gitconfig-llms:/home/ai/.gitconfig"
+      - "${HOME}/.config/opencode:/home/ai/.config/opencode"
+      - "${HOME}/.local/share/opencode:/home/ai/.local/share/opencode"
+      - "${HOME}/.local/state/opencode:/home/ai/.local/state/opencode"
+      - "${HOME}/.claude.json:/home/ai/.claude.json"
+      - "${HOME}/.claude:/home/ai/.claude"
+      - "${HOME}/.claude:${HOME}/.claude"
+      - "${HOME}/.codex:/home/ai/.codex"
+      - "${HOME}/.codex:${HOME}/.codex"
+      - "${HOME}/.context:/home/ai/.context"
+      - "${HOME}/.cache/ms-playwright:/home/ai/.cache/ms-playwright"
+      - "${HOME}/.cache/uv:/home/ai/.cache/uv"
+      - "${HOME}/.local/share/uv/:${HOME}/.local/share/uv/" # resolves uv venv's python symlink
+      - "${HOME}/.local/share/uv/:/home/ai/.local/share/uv/"
+      - "${HOME}/.local/share/pnpm:/home/ai/.local/share/pnpm"
+      - "${HOME}/.config/herdr:${HOME}/.config/herdr"
+      - "${WORKSPACE_DIR:-${TARGET_DIR:-./}}:${WORKSPACE_DIR:-${TARGET_DIR:-/workspace}}"
+    working_dir: ${TARGET_DIR:-/workspace}
+    devices:
+      - /dev/fuse:/dev/fuse
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    network_mode: host
+    environment:
+      TZ: ${TZ:-Europe/Moscow}
+      LANG: ${LANG:-en_US.UTF-8}
+      LC_ALL: ${LC_ALL:-en_US.UTF-8}
+      NODE_OPTIONS: "--max-old-space-size=4096"
+      POWERLEVEL9K_DISABLE_GITSTATUS: "true"
+      HTTP_PROXY: "${HTTP_PROXY:-}"
+      HTTPS_PROXY: "${HTTPS_PROXY:-}"
+      NO_PROXY: "localhost,127.0.0.1,::1,0.0.0.0,10.0.0.0/8,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.168.0.0/16,fc00::/7,fe80::/10,host.docker.internal,.lan,.local,.ru,.su"
+      MILVUS_ADDRESS: "http://milvus.hata.awoonet.lan:19530"
+      EMBEDDING_PROVIDER: Ollama
+      EMBEDDING_MODEL: "nomic-embed-text:v1.5"
+      OLLAMA_HOST: "http://host.docker.internal:11434"
+      EMBEDDING_BATCH_SIZE: 10
+      HERDR_ENV: "${HERDR_ENV:-1}"
+      HERDR_SOCKET_PATH: "${HERDR_SOCKET_PATH:-}"
+      HERDR_PANE_ID: "${HERDR_PANE_ID:-}"
+
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        # Keep container time in sync with the requested timezone.
+        if [ -n "$$TZ" ] && [ -f "/usr/share/zoneinfo/$$TZ" ]; then
+          ln -snf "/usr/share/zoneinfo/$$TZ" /etc/localtime
+          echo "$$TZ" > /etc/timezone 2>/dev/null || true
+        fi
+
+        # Convert the host X11 cookie into a container-local wildcard cookie.
+        # This lets X11 clipboard tools work even though the container hostname
+        # differs from the host that created the original .Xauthority entry.
+        if [ -n "$$DISPLAY" ] && [ -r /tmp/.host.Xauthority ] && [ ! -d /tmp/.host.Xauthority ]; then
+          rm -f /home/ai/.Xauthority
+          touch /home/ai/.Xauthority
+
+          export_xauth() {
+            xauth -f /tmp/.host.Xauthority nlist "$$1" 2>/dev/null \
+              | sed -e 's/^..../ffff/' \
+              | xauth -f /home/ai/.Xauthority nmerge - 2>/dev/null
+          }
+
+          export_xauth "$$DISPLAY" || true
+
+          if ! xauth -f /home/ai/.Xauthority list 2>/dev/null | grep -q .; then
+            export_xauth "" || true
+          fi
+
+          chown ai:ai /home/ai/.Xauthority
+          chmod 600 /home/ai/.Xauthority
+        fi
+
+        if [ "$$#" -eq 0 ]; then
+          set -- zsh
+        fi
+
+        exec gosu ai "$$@"
+      - --

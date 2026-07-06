@@ -1,0 +1,9 @@
+[user]
+        name = Dmitry Seleznyov
+        email = selim013@gmail.com
+
+[push]
+        default = simple
+
+[init]
+	defaultBranch = master

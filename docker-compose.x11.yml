@@ -1,0 +1,12 @@
+# Optional X11 clipboard/display integration; not a standalone compose config.
+# It must be layered on top of docker-compose.yml.
+# The justfile includes this override only when the host has DISPLAY set and
+# /tmp/.X11-unix exists, so non-X11 hosts can use docker-compose.yml alone.
+services:
+  coding-agents:
+    volumes:
+      - "${XAUTHORITY:-${HOME}/.Xauthority}:/tmp/.host.Xauthority:ro"
+      - "/tmp/.X11-unix:/tmp/.X11-unix:ro"
+    environment:
+      DISPLAY: "${DISPLAY:-:0}"
+      XAUTHORITY: "/home/ai/.Xauthority"
