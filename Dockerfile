@@ -444,7 +444,7 @@ ENV COLORTERM=truecolor
 
 # Default powerline10k theme
 # renovate: datasource=github-releases depName=deluan/zsh-in-docker extractVersion=^v(?<version>.*)$
-ARG ZSH_IN_DOCKER_VERSION=1.2.0
+ARG ZSH_IN_DOCKER_VERSION=1.2.1
 RUN sh -c "$(curl -fsSL https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
   -p git \
   -p fzf \
