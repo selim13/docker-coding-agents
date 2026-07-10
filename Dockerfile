@@ -302,7 +302,7 @@ RUN set -eux; \
     rm -rf "${tmpdir}"
 
 # renovate: datasource=github-releases depName=casey/just
-ENV JUST_VERSION=1.47.0
+ENV JUST_VERSION=1.56.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") \
