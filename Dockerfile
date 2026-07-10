@@ -345,7 +345,8 @@ RUN set -eux; \
     install -m 0755 "/tmp/golangci-lint-${GOLANGCI_LINT_VERSION}-linux-${goarch}/golangci-lint" /usr/local/bin/golangci-lint && \
     rm -rf /tmp/golangci-lint.tar.gz "/tmp/golangci-lint-${GOLANGCI_LINT_VERSION}-linux-${goarch}"
 
-ARG PLAYWRIGHT_PYTHON_VERSION=1.58.0
+# renovate: datasource=pypi depName=playwright
+ARG PLAYWRIGHT_VERSION=1.58.0
 # renovate: datasource=pypi depName=markdownify
 ARG MARKDOWNIFY_VERSION=1.2.3
 # renovate: datasource=pypi depName=openpyxl
@@ -356,7 +357,7 @@ RUN pip install --break-system-packages \
   markdownify==${MARKDOWNIFY_VERSION} \
   openpyxl==${OPENPYXL_VERSION} \
   pandas==${PANDAS_VERSION} \
-  playwright==${PLAYWRIGHT_PYTHON_VERSION}
+  playwright==${PLAYWRIGHT_VERSION}
 
 ### PHP ###
 ARG PHP_VERSIONS="8.5 8.4 8.3 8.2 8.1"
@@ -460,13 +461,12 @@ COPY --from=oven/bun:1.3.14 /usr/local/bin/bun /usr/local/bin/bun
 ENV UV_NO_PROGRESS=1
 
 # Configure playwright
-ARG PLAYWRIGHT_NODE_VERSION=1.58.2
 ENV PLAYWRIGHT_BROWSERS_PATH="/home/$USERNAME/.cache/ms-playwright/"
 ARG INSTALL_CHROME=true
 RUN mkdir -p /home/$USERNAME/.config/google-chrome/Crashpad
-RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g playwright@${PLAYWRIGHT_NODE_VERSION}
+RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g playwright@${PLAYWRIGHT_VERSION}
 RUN if [ "$INSTALL_CHROME" = "true" ]; then \
-    playwright install chromium; \
+    python3 -m playwright install chromium; \
   fi
 
 ENV REBUILD_HERE=1
