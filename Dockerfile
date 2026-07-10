@@ -454,7 +454,7 @@ RUN sh -c "$(curl -fsSL https://github.com/deluan/zsh-in-docker/releases/downloa
   -x
 
 
-COPY --from=ghcr.io/astral-sh/uv:0.10.12 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.11.28 /uv /uvx /bin/
 COPY --from=oven/bun:1.3.14 /usr/local/bin/bun /usr/local/bin/bun
 # Reduce the verbosity of uv - impacts performance of stdout buffering
 ENV UV_NO_PROGRESS=1
