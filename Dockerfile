@@ -4,7 +4,7 @@
 # https://github.com/openai/codex-universal
 
 
-FROM debian:trixie
+FROM debian:trixie-20260623
 
 LABEL org.opencontainers.image.title="coding-agents" \
       org.opencontainers.image.description="Isolated environment for codex, claude and opencode." \
