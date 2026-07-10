@@ -3,5 +3,11 @@
   "extends": [
     "config:recommended",
     "customManagers:dockerfileVersions"
+  ],
+  "packageRules": [
+    {
+      "matchFileNames": ["Dockerfile"],
+      "groupName": "Dockerfile dependencies"
+    }
   ]
 }
