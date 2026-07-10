@@ -21,7 +21,6 @@ ARG TARGETARCH
 ARG TZ
 ENV TZ="$TZ"
 
-ARG OPENCODE_VERSION=latest
 ARG USERNAME=ai
 
 # Add NodeSource, Docker, and sury.org (PHP) repositories
@@ -141,6 +140,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     zstd \
     zsh
 
+# renovate: datasource=github-releases depName=hadolint/hadolint extractVersion=^v(?<version>.*)$
 ARG HADOLINT_VERSION=2.14.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
@@ -152,6 +152,7 @@ RUN set -eux; \
     chmod 0755 /usr/local/bin/hadolint; \
     hadolint --version | grep -F "Haskell Dockerfile Linter ${HADOLINT_VERSION}"
 
+# renovate: datasource=github-releases depName=peak/s5cmd extractVersion=^v(?<version>.*)$
 ARG S5CMD_VERSION=2.3.0
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
@@ -167,6 +168,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get install -y --no-install-recommends "/tmp/${deb}"; \
     rm "/tmp/${deb}"
 
+# renovate: datasource=github-releases depName=restic/restic extractVersion=^v(?<version>.*)$
 ARG RESTIC_VERSION=0.18.1
 RUN set -eux; \
     case "${TARGETARCH}" in \
@@ -234,12 +236,14 @@ RUN if [ -f /etc/fuse.conf ]; then \
 
 WORKDIR /workspace
 
+# renovate: datasource=github-releases depName=dandavison/delta
 ARG GIT_DELTA_VERSION=0.18.2
 RUN ARCH=$(dpkg --print-architecture) && \
   curl -fsSL "https://github.com/dandavison/delta/releases/download/${GIT_DELTA_VERSION}/git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" -o "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" && \
   sudo dpkg -i "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" && \
   rm "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb"
 
+# renovate: datasource=github-releases depName=Wilfred/difftastic
 ENV DIFFT_VERSION=0.67.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
@@ -257,6 +261,7 @@ RUN set -eux; \
     install -m 0755 "${tmpdir}/difft" /usr/local/bin/difft; \
     rm -rf "${tmpdir}"
 
+# renovate: datasource=github-releases depName=BurntSushi/ripgrep
 ENV RIPGREP_VERSION=15.1.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
@@ -276,6 +281,7 @@ RUN set -eux; \
     install -m 0755 "${tmpdir}/${dirname}/rg" /usr/local/bin/rg; \
     rm -rf "${tmpdir}"
 
+# renovate: datasource=github-releases depName=koalaman/shellcheck extractVersion=^v(?<version>.*)$
 ENV SHELLCHECK_VERSION=0.11.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
@@ -295,6 +301,7 @@ RUN set -eux; \
     install -m 0755 "${tmpdir}/${dirname}/shellcheck" /usr/local/bin/shellcheck; \
     rm -rf "${tmpdir}"
 
+# renovate: datasource=github-releases depName=casey/just
 ENV JUST_VERSION=1.47.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
@@ -313,6 +320,7 @@ RUN set -eux; \
     install -m 0755 "${tmpdir}/just" /usr/local/bin/just; \
     rm -rf "${tmpdir}"
 
+# renovate: datasource=golang-version depName=go
 ENV GO_VERSION=1.25.1
 RUN set -eux; \
     case "${TARGETARCH}" in \
@@ -324,6 +332,7 @@ RUN set -eux; \
     tar -C /usr/local -xzf /tmp/go.tar.gz && \
     rm /tmp/go.tar.gz
 
+# renovate: datasource=github-releases depName=golangci/golangci-lint extractVersion=^v(?<version>.*)$
 ENV GOLANGCI_LINT_VERSION=2.1.6
 RUN set -eux; \
     case "${TARGETARCH}" in \
@@ -337,10 +346,16 @@ RUN set -eux; \
     rm -rf /tmp/golangci-lint.tar.gz "/tmp/golangci-lint-${GOLANGCI_LINT_VERSION}-linux-${goarch}"
 
 ARG PLAYWRIGHT_PYTHON_VERSION=1.58.0
+# renovate: datasource=pypi depName=markdownify
+ARG MARKDOWNIFY_VERSION=1.2.3
+# renovate: datasource=pypi depName=openpyxl
+ARG OPENPYXL_VERSION=3.1.5
+# renovate: datasource=pypi depName=pandas
+ARG PANDAS_VERSION=3.0.3
 RUN pip install --break-system-packages \
-  markdownify \
-  openpyxl \
-  pandas \
+  markdownify==${MARKDOWNIFY_VERSION} \
+  openpyxl==${OPENPYXL_VERSION} \
+  pandas==${PANDAS_VERSION} \
   playwright==${PLAYWRIGHT_PYTHON_VERSION}
 
 ### PHP ###
@@ -367,14 +382,19 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     update-alternatives --set php /usr/bin/php${PHP_VERSIONS%% *}
 
 # Composer
-RUN curl -fsSL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# renovate: datasource=github-releases depName=composer/composer
+ARG COMPOSER_VERSION=2.10.2
+RUN curl -fsSL https://getcomposer.org/installer | php -- --version="${COMPOSER_VERSION}" --install-dir=/usr/local/bin --filename=composer
 
 # Enable corepack for pnpm and yarn
-ARG PNPM_VERSION=11
+# renovate: datasource=npm depName=pnpm
+ARG PNPM_VERSION=11.11.0
+# renovate: datasource=npm depName=@yarnpkg/cli-dist
+ARG YARN_VERSION=4.17.1
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable && \
     corepack prepare pnpm@${PNPM_VERSION} --activate && pnpm -v && \
-    corepack prepare yarn@stable --activate && yarn -v
+    corepack prepare yarn@${YARN_VERSION} --activate && yarn -v
 
 # Set up non-root user
 USER $USERNAME
@@ -408,6 +428,7 @@ RUN printf '%s\n' \
 # Pin PNPM's store directory to match the mounted host's one
 RUN pnpm config set store-dir /home/ai/.local/share/pnpm/store/v${PNPM_VERSION%%.*} --global
 
+# renovate: datasource=github-releases depName=composer-unused/composer-unused
 ENV COMPOSER_UNUSED_VERSION=0.9.6
 RUN mkdir -p /home/$USERNAME/.local/bin && \
     curl -fsSL "https://github.com/composer-unused/composer-unused/releases/download/${COMPOSER_UNUSED_VERSION}/composer-unused.phar" -o /home/$USERNAME/.local/bin/composer-unused && \
@@ -422,6 +443,7 @@ ENV VISUAL=nano
 ENV COLORTERM=truecolor
 
 # Default powerline10k theme
+# renovate: datasource=github-releases depName=deluan/zsh-in-docker extractVersion=^v(?<version>.*)$
 ARG ZSH_IN_DOCKER_VERSION=1.2.0
 RUN sh -c "$(curl -fsSL https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
   -p git \
@@ -432,8 +454,8 @@ RUN sh -c "$(curl -fsSL https://github.com/deluan/zsh-in-docker/releases/downloa
   -x
 
 
-COPY --from=ghcr.io/astral-sh/uv:0.10 /uv /uvx /bin/
-COPY --from=oven/bun:latest /usr/local/bin/bun /usr/local/bin/bun
+COPY --from=ghcr.io/astral-sh/uv:0.10.12 /uv /uvx /bin/
+COPY --from=oven/bun:1.3.14 /usr/local/bin/bun /usr/local/bin/bun
 # Reduce the verbosity of uv - impacts performance of stdout buffering
 ENV UV_NO_PROGRESS=1
 
@@ -448,14 +470,28 @@ RUN if [ "$INSTALL_CHROME" = "true" ]; then \
   fi
 
 ENV REBUILD_HERE=1
+# renovate: datasource=npm depName=opencode-ai
+ARG OPENCODE_VERSION=1.17.18
+# renovate: datasource=npm depName=@openai/codex
+ARG CODEX_VERSION=0.144.1
+# renovate: datasource=npm depName=@anthropic-ai/claude-code
+ARG CLAUDE_CODE_VERSION=2.1.206
+# renovate: datasource=npm depName=@ast-grep/cli
+ARG AST_GREP_CLI_VERSION=0.44.1
+# renovate: datasource=npm depName=html-validate
+ARG HTML_VALIDATE_VERSION=11.5.5
+# renovate: datasource=npm depName=mcpdoc
+ARG MCPDOC_VERSION=0.0.1
+# renovate: datasource=npm depName=sentry
+ARG SENTRY_VERSION=0.38.0
 RUN npm install -g \
-    opencode-ai \
-    @openai/codex \
-    @anthropic-ai/claude-code \
-    @ast-grep/cli \
-    html-validate \
-    mcpdoc \
-    sentry
+    opencode-ai@${OPENCODE_VERSION} \
+    @openai/codex@${CODEX_VERSION} \
+    @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} \
+    @ast-grep/cli@${AST_GREP_CLI_VERSION} \
+    html-validate@${HTML_VALIDATE_VERSION} \
+    mcpdoc@${MCPDOC_VERSION} \
+    sentry@${SENTRY_VERSION}
 
 # RUN claude install
 
