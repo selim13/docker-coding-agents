@@ -454,9 +454,12 @@ RUN sh -c "$(curl -fsSL https://github.com/deluan/zsh-in-docker/releases/downloa
   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   -x
 
-
-COPY --from=ghcr.io/astral-sh/uv:0.10.12 /uv /uvx /bin/
-COPY --from=oven/bun:1.3.14 /usr/local/bin/bun /usr/local/bin/bun
+# renovate: datasource=docker depName=ghcr.io/astral-sh/uv
+ARG UV_VERSION=0.10.12
+# renovate: datasource=docker depName=oven/bun
+ARG BUN_VERSION=1.3.14
+COPY --from=ghcr.io/astral-sh/uv:${UV_VERSION} /uv /uvx /bin/
+COPY --from=oven/bun:${BUN_VERSION} /usr/local/bin/bun /usr/local/bin/bun
 # Reduce the verbosity of uv - impacts performance of stdout buffering
 ENV UV_NO_PROGRESS=1
 
@@ -496,3 +499,34 @@ RUN npm install -g \
 # RUN claude install
 
 USER root
+
+RUN mkdir -p /etc/coding-agents /etc/codex /etc/claude-code && \
+  if [ -d "$PLAYWRIGHT_BROWSERS_PATH" ]; then \
+    playwright_chrome_path="$(find "$PLAYWRIGHT_BROWSERS_PATH" -type f -path '*/chrome-linux/chrome' -print | sort | tail -n 1)"; \
+  fi && \
+  playwright_chrome_path="${playwright_chrome_path:-not installed}" && \
+  printf '%s\n' \
+    'You are running inside an isolated Docker container based on Debian Trixie:' \
+    "- default user: ${USERNAME} (uid/gid 1000)" \
+    '' \
+    '## Key Tools' \
+    "- agents: codex ${CODEX_VERSION}, claude-code ${CLAUDE_CODE_VERSION}, opencode ${OPENCODE_VERSION}" \
+    '- search/edit: rg, ast-grep, jq, yq, xmlstarlet, difft, delta' \
+    '- runtimes: python3, node, go, php, composer, uv, uvx, bun' \
+    '- package managers: npm, pnpm, yarn, pip, composer' \
+    '- validation: hadolint, shellcheck, yamllint, html-validate' \
+    '- infra/storage: docker, docker compose, gh, aws, s5cmd, rclone, restic' \
+    '' \
+    "- node CLIs: pnpm ${PNPM_VERSION}, yarn ${YARN_VERSION}, bun ${BUN_VERSION}" \
+    "- python packages: playwright ${PLAYWRIGHT_VERSION}, pandas ${PANDAS_VERSION}, openpyxl ${OPENPYXL_VERSION}, markdownify ${MARKDOWNIFY_VERSION}" \
+    "- browser automation: Playwright Python and npm are pinned together; Chromium is installed by python3 -m playwright install chromium" \
+    "- Playwright browsers path: /home/${USERNAME}/.cache/ms-playwright/" \
+    "- Playwright Chromium executable: ${playwright_chrome_path}; use it and do not reinstall Chrome or Playwright browsers unless explicitly requested" \
+    "- shell/editor: zsh, nano" \
+    > /etc/coding-agents/context.md && \
+  { \
+    printf '%s\n' 'developer_instructions = """'; \
+    cat /etc/coding-agents/context.md; \
+    printf '%s\n' '"""'; \
+  } > /etc/codex/managed_config.toml && \
+  cp /etc/coding-agents/context.md /etc/claude-code/CLAUDE.md
