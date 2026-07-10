@@ -333,7 +333,7 @@ RUN set -eux; \
     rm /tmp/go.tar.gz
 
 # renovate: datasource=github-releases depName=golangci/golangci-lint extractVersion=^v(?<version>.*)$
-ENV GOLANGCI_LINT_VERSION=2.1.6
+ENV GOLANGCI_LINT_VERSION=2.12.2
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") goarch="arm64" ;; \
