@@ -169,7 +169,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     rm "/tmp/${deb}"
 
 # renovate: datasource=github-releases depName=restic/restic extractVersion=^v(?<version>.*)$
-ARG RESTIC_VERSION=0.18.1
+ARG RESTIC_VERSION=0.19.1
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") restic_arch="arm64" ;; \
