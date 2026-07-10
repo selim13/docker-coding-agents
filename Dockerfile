@@ -321,7 +321,7 @@ RUN set -eux; \
     rm -rf "${tmpdir}"
 
 # renovate: datasource=golang-version depName=go
-ENV GO_VERSION=1.25.1
+ENV GO_VERSION=1.26.5
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") goarch="arm64" ;; \
