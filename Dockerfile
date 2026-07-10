@@ -1,10 +1,10 @@
-# syntax=docker/dockerfile:1.7
+# syntax=docker/dockerfile:1.25
 
 # https://github.com/anthropics/claude-code/blob/main/.devcontainer/Dockerfile
 # https://github.com/openai/codex-universal
 
 
-FROM debian:trixie
+FROM debian:trixie-20260623
 
 LABEL org.opencontainers.image.title="coding-agents" \
       org.opencontainers.image.description="Isolated environment for codex, claude and opencode." \
@@ -169,7 +169,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     rm "/tmp/${deb}"
 
 # renovate: datasource=github-releases depName=restic/restic extractVersion=^v(?<version>.*)$
-ARG RESTIC_VERSION=0.18.1
+ARG RESTIC_VERSION=0.19.1
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") restic_arch="arm64" ;; \
@@ -237,14 +237,14 @@ RUN if [ -f /etc/fuse.conf ]; then \
 WORKDIR /workspace
 
 # renovate: datasource=github-releases depName=dandavison/delta
-ARG GIT_DELTA_VERSION=0.18.2
+ARG GIT_DELTA_VERSION=0.19.2
 RUN ARCH=$(dpkg --print-architecture) && \
   curl -fsSL "https://github.com/dandavison/delta/releases/download/${GIT_DELTA_VERSION}/git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" -o "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" && \
   sudo dpkg -i "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" && \
   rm "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb"
 
 # renovate: datasource=github-releases depName=Wilfred/difftastic
-ENV DIFFT_VERSION=0.67.0
+ENV DIFFT_VERSION=0.69.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") \
@@ -302,7 +302,7 @@ RUN set -eux; \
     rm -rf "${tmpdir}"
 
 # renovate: datasource=github-releases depName=casey/just
-ENV JUST_VERSION=1.47.0
+ENV JUST_VERSION=1.56.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") \
@@ -321,7 +321,7 @@ RUN set -eux; \
     rm -rf "${tmpdir}"
 
 # renovate: datasource=golang-version depName=go
-ENV GO_VERSION=1.25.1
+ENV GO_VERSION=1.26.5
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") goarch="arm64" ;; \
@@ -333,7 +333,7 @@ RUN set -eux; \
     rm /tmp/go.tar.gz
 
 # renovate: datasource=github-releases depName=golangci/golangci-lint extractVersion=^v(?<version>.*)$
-ENV GOLANGCI_LINT_VERSION=2.1.6
+ENV GOLANGCI_LINT_VERSION=2.12.2
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") goarch="arm64" ;; \
@@ -346,7 +346,7 @@ RUN set -eux; \
     rm -rf /tmp/golangci-lint.tar.gz "/tmp/golangci-lint-${GOLANGCI_LINT_VERSION}-linux-${goarch}"
 
 # renovate: datasource=pypi depName=playwright
-ARG PLAYWRIGHT_VERSION=1.58.0
+ARG PLAYWRIGHT_VERSION=1.61.0
 # renovate: datasource=pypi depName=markdownify
 ARG MARKDOWNIFY_VERSION=1.2.3
 # renovate: datasource=pypi depName=openpyxl
@@ -445,7 +445,7 @@ ENV COLORTERM=truecolor
 
 # Default powerline10k theme
 # renovate: datasource=github-releases depName=deluan/zsh-in-docker extractVersion=^v(?<version>.*)$
-ARG ZSH_IN_DOCKER_VERSION=1.2.0
+ARG ZSH_IN_DOCKER_VERSION=1.2.1
 RUN sh -c "$(curl -fsSL https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
   -p git \
   -p fzf \
@@ -455,7 +455,7 @@ RUN sh -c "$(curl -fsSL https://github.com/deluan/zsh-in-docker/releases/downloa
   -x
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.10.12
+ARG UV_VERSION=0.11.28
 # renovate: datasource=docker depName=oven/bun
 ARG BUN_VERSION=1.3.14
 COPY --from=ghcr.io/astral-sh/uv:${UV_VERSION} /uv /uvx /bin/
