@@ -4,6 +4,14 @@
 # https://github.com/openai/codex-universal
 
 
+# renovate: datasource=docker depName=ghcr.io/astral-sh/uv
+ARG UV_VERSION=0.11.28
+# renovate: datasource=docker depName=oven/bun
+ARG BUN_VERSION=1.3.14
+
+FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
+FROM oven/bun:${BUN_VERSION} AS bun
+
 FROM debian:trixie-20260623
 
 LABEL org.opencontainers.image.title="coding-agents" \
@@ -17,6 +25,8 @@ LABEL org.opencontainers.image.title="coding-agents" \
       org.opencontainers.image.revision="${IMAGE_REVISION}" \
       org.opencontainers.image.version="${IMAGE_VERSION}"
 
+ARG UV_VERSION
+ARG BUN_VERSION
 ARG TARGETARCH
 ARG TZ
 ENV TZ="$TZ"
@@ -454,12 +464,8 @@ RUN sh -c "$(curl -fsSL https://github.com/deluan/zsh-in-docker/releases/downloa
   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   -x
 
-# renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.11.28
-# renovate: datasource=docker depName=oven/bun
-ARG BUN_VERSION=1.3.14
-COPY --from=ghcr.io/astral-sh/uv:${UV_VERSION} /uv /uvx /bin/
-COPY --from=oven/bun:${BUN_VERSION} /usr/local/bin/bun /usr/local/bin/bun
+COPY --from=uv /uv /uvx /bin/
+COPY --from=bun /usr/local/bin/bun /usr/local/bin/bun
 # Reduce the verbosity of uv - impacts performance of stdout buffering
 ENV UV_NO_PROGRESS=1
 
@@ -517,7 +523,7 @@ RUN mkdir -p /etc/coding-agents /etc/codex /etc/claude-code && \
     '- validation: hadolint, shellcheck, yamllint, html-validate' \
     '- infra/storage: docker, docker compose, gh, aws, s5cmd, rclone, restic' \
     '' \
-    "- node CLIs: pnpm ${PNPM_VERSION}, yarn ${YARN_VERSION}, bun ${BUN_VERSION}" \
+    "- CLIs: uv ${UV_VERSION}, pnpm ${PNPM_VERSION}, yarn ${YARN_VERSION}, bun ${BUN_VERSION}" \
     "- python packages: playwright ${PLAYWRIGHT_VERSION}, pandas ${PANDAS_VERSION}, openpyxl ${OPENPYXL_VERSION}, markdownify ${MARKDOWNIFY_VERSION}" \
     "- browser automation: Playwright Python and npm are pinned together; Chromium is installed by python3 -m playwright install chromium" \
     "- Playwright browsers path: /home/${USERNAME}/.cache/ms-playwright/" \
