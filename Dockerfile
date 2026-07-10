@@ -244,7 +244,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
   rm "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb"
 
 # renovate: datasource=github-releases depName=Wilfred/difftastic
-ENV DIFFT_VERSION=0.67.0
+ENV DIFFT_VERSION=0.69.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") \
