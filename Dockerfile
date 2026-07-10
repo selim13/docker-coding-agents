@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.7
+# syntax=docker/dockerfile:1.25
 
 # https://github.com/anthropics/claude-code/blob/main/.devcontainer/Dockerfile
 # https://github.com/openai/codex-universal
