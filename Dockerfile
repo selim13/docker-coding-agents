@@ -399,7 +399,7 @@ RUN curl -fsSL https://getcomposer.org/installer | php -- --version="${COMPOSER_
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=11.11.0
+ARG PNPM_VERSION=11.12.0
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.17.1
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
@@ -486,13 +486,13 @@ ARG CODEX_VERSION=0.144.1
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
 ARG CODEX_ACP_VERSION=1.1.2
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.206
+ARG CLAUDE_CODE_VERSION=2.1.207
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
 ARG CLAUDE_AGENT_ACP_VERSION=0.58.1
 # renovate: datasource=npm depName=@ast-grep/cli
 ARG AST_GREP_CLI_VERSION=0.44.1
 # renovate: datasource=npm depName=html-validate
-ARG HTML_VALIDATE_VERSION=11.5.5
+ARG HTML_VALIDATE_VERSION=11.5.6
 # renovate: datasource=npm depName=mcpdoc
 ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
