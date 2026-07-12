@@ -31,6 +31,9 @@ build:
 rm:
     just --justfile {{ justfile() }} docker-compose 'rm coding-agents'
 
+pull:
+    just --justfile {{ justfile() }} docker-compose pull
+
 run *cmd="":
     just --justfile {{ justfile() }} docker-compose 'run --rm {{ service }} {{ cmd }}'
 
