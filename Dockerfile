@@ -483,8 +483,12 @@ ENV REBUILD_HERE=1
 ARG OPENCODE_VERSION=1.17.18
 # renovate: datasource=npm depName=@openai/codex
 ARG CODEX_VERSION=0.144.1
+# renovate: datasource=npm depName=@agentclientprotocol/codex-acp
+ARG CODEX_ACP_VERSION=1.1.2
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
 ARG CLAUDE_CODE_VERSION=2.1.206
+# renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
+ARG CLAUDE_AGENT_ACP_VERSION=0.58.1
 # renovate: datasource=npm depName=@ast-grep/cli
 ARG AST_GREP_CLI_VERSION=0.44.1
 # renovate: datasource=npm depName=html-validate
@@ -496,7 +500,9 @@ ARG SENTRY_VERSION=0.38.0
 RUN npm install -g \
     opencode-ai@${OPENCODE_VERSION} \
     @openai/codex@${CODEX_VERSION} \
+    @agentclientprotocol/codex-acp@${CODEX_ACP_VERSION} \
     @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} \
+    @agentclientprotocol/claude-agent-acp@${CLAUDE_AGENT_ACP_VERSION} \
     @ast-grep/cli@${AST_GREP_CLI_VERSION} \
     html-validate@${HTML_VALIDATE_VERSION} \
     mcpdoc@${MCPDOC_VERSION} \

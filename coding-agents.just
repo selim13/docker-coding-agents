@@ -48,6 +48,16 @@ claude *args="":
     LC_ALL="en_SG.UTF-8" \
     just --justfile {{ justfile() }} run 'claude {{ args }}'
 
+claude-acp:
+    TARGET_DIR="{{ invocation_directory_native() }}" \
+    HTTP_PROXY="http://10.13.1.35:8014" \
+    HTTPS_PROXY="http://10.13.1.35:8014" \
+    NO_PROXY="localhost,127.0.0.1,::1,0.0.0.0,10.0.0.0/8,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.168.0.0/16,fc00::/7,fe80::/10,host.docker.internal,.lan,.local,.ru,.su" \
+    TZ="Asia/Singapore" \
+    LANG="en_SG.UTF-8" \
+    LC_ALL="en_SG.UTF-8" \
+    just --justfile {{ justfile() }} docker-compose 'run --rm -T {{ service }} claude-agent-acp'
+
 codex *args="":
     TARGET_DIR="{{ invocation_directory_native() }}" \
     HTTP_PROXY="http://127.0.0.1:8014" \
@@ -57,6 +67,16 @@ codex *args="":
     LANG="en_SG.UTF-8" \
     LC_ALL="en_SG.UTF-8" \
     just --justfile {{ justfile() }} run 'codex {{ args }}'
+
+codex-acp:
+    TARGET_DIR="{{ invocation_directory_native() }}" \
+    HTTP_PROXY="http://10.13.1.35:8014" \
+    HTTPS_PROXY="http://10.13.1.35:8014" \
+    NO_PROXY="localhost,127.0.0.1,::1,0.0.0.0,10.0.0.0/8,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.168.0.0/16,fc00::/7,fe80::/10,host.docker.internal,.lan,.local,.ru,.su" \
+    TZ="Asia/Singapore" \
+    LANG="en_SG.UTF-8" \
+    LC_ALL="en_SG.UTF-8" \
+    just --justfile {{ justfile() }} docker-compose 'run --rm -T {{ service }} codex-acp'
 
 claude-at workdir *args="":
     workspace_dir="{{ invocation_directory_native() }}"; \
