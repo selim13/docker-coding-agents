@@ -5,14 +5,14 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.11.28
+ARG UV_VERSION=0.11.29
 # renovate: datasource=docker depName=oven/bun
 ARG BUN_VERSION=1.3.14
 
 FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
 FROM oven/bun:${BUN_VERSION} AS bun
 
-FROM debian:trixie-20260623
+FROM debian:13
 
 LABEL org.opencontainers.image.title="coding-agents" \
       org.opencontainers.image.description="Isolated environment for codex, claude and opencode." \
@@ -272,7 +272,7 @@ RUN set -eux; \
     rm -rf "${tmpdir}"
 
 # renovate: datasource=github-releases depName=BurntSushi/ripgrep
-ENV RIPGREP_VERSION=15.1.0
+ENV RIPGREP_VERSION=15.2.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") \
@@ -399,7 +399,7 @@ RUN curl -fsSL https://getcomposer.org/installer | php -- --version="${COMPOSER_
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=11.12.0
+ARG PNPM_VERSION=11.13.1
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.17.1
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
@@ -480,15 +480,15 @@ RUN if [ "$INSTALL_CHROME" = "true" ]; then \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.17.18
+ARG OPENCODE_VERSION=1.18.2
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.144.1
+ARG CODEX_VERSION=0.144.5
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=1.1.2
+ARG CODEX_ACP_VERSION=1.1.4
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.207
+ARG CLAUDE_CODE_VERSION=2.1.211
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.58.1
+ARG CLAUDE_AGENT_ACP_VERSION=0.59.0
 # renovate: datasource=npm depName=@ast-grep/cli
 ARG AST_GREP_CLI_VERSION=0.44.1
 # renovate: datasource=npm depName=html-validate
