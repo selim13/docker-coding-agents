@@ -399,7 +399,7 @@ RUN curl -fsSL https://getcomposer.org/installer | php -- --version="${COMPOSER_
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=11.13.1
+ARG PNPM_VERSION=11.14.0
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.17.1
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
@@ -480,13 +480,13 @@ RUN if [ "$INSTALL_CHROME" = "true" ]; then \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.18.2
+ARG OPENCODE_VERSION=1.18.3
 # renovate: datasource=npm depName=@openai/codex
 ARG CODEX_VERSION=0.144.5
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
 ARG CODEX_ACP_VERSION=1.1.4
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.211
+ARG CLAUDE_CODE_VERSION=2.1.214
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
 ARG CLAUDE_AGENT_ACP_VERSION=0.59.0
 # renovate: datasource=npm depName=@ast-grep/cli
