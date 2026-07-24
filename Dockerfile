@@ -5,7 +5,7 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.11.29
+ARG UV_VERSION=0.11.32
 # renovate: datasource=docker depName=oven/bun
 ARG BUN_VERSION=1.3.14
 
@@ -362,7 +362,7 @@ ARG MARKDOWNIFY_VERSION=1.2.3
 # renovate: datasource=pypi depName=openpyxl
 ARG OPENPYXL_VERSION=3.1.5
 # renovate: datasource=pypi depName=pandas
-ARG PANDAS_VERSION=3.0.3
+ARG PANDAS_VERSION=3.0.5
 RUN pip install --break-system-packages \
   markdownify==${MARKDOWNIFY_VERSION} \
   openpyxl==${OPENPYXL_VERSION} \
@@ -399,7 +399,7 @@ RUN curl -fsSL https://getcomposer.org/installer | php -- --version="${COMPOSER_
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=11.15.0
+ARG PNPM_VERSION=11.17.0
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.17.1
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
@@ -480,17 +480,17 @@ RUN if [ "$INSTALL_CHROME" = "true" ]; then \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.18.3
+ARG OPENCODE_VERSION=1.18.4
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.144.6
+ARG CODEX_VERSION=0.145.0
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=1.1.4
+ARG CODEX_ACP_VERSION=1.1.7
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.215
+ARG CLAUDE_CODE_VERSION=2.1.218
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.59.0
+ARG CLAUDE_AGENT_ACP_VERSION=0.61.0
 # renovate: datasource=npm depName=@ast-grep/cli
-ARG AST_GREP_CLI_VERSION=0.44.1
+ARG AST_GREP_CLI_VERSION=0.45.0
 # renovate: datasource=npm depName=html-validate
 ARG HTML_VALIDATE_VERSION=11.5.6
 # renovate: datasource=npm depName=mcpdoc
