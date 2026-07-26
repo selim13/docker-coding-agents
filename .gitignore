@@ -2,6 +2,7 @@
 /rfc
 /reference
 /data
+/tmp
 node_modules
 
 .opencode/*

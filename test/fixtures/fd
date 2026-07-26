@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -e
+
+: "${FD_CAPTURE:?}"
+printf '%s\0' "$@" > "$FD_CAPTURE"
+
+excludes=()
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --exclude) excludes+=("$2"); shift 2 ;;
+        --) shift; break ;;
+        *) shift ;;
+    esac
+done
+pattern=$1
+root=$2
+find_args=("$root" "(" -type d -name .git)
+for exclude in "${excludes[@]}"; do
+    [ "$exclude" = .git ] && continue
+    find_args+=(-o -type d -path "$root/${exclude#/}")
+done
+find_args+=(")" -prune -o "(" -type d -name "$pattern" -print0 -prune ")")
+find "${find_args[@]}"

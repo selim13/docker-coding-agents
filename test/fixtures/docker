@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+: "${DOCKER_CAPTURE:?}"
+printf '%s\0' "$@" > "$DOCKER_CAPTURE"
