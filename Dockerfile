@@ -162,6 +162,18 @@ RUN set -eux; \
     chmod 0755 /usr/local/bin/hadolint; \
     hadolint --version | grep -F "Haskell Dockerfile Linter ${HADOLINT_VERSION}"
 
+# renovate: datasource=github-releases depName=immanuwell/dockerfile-roast
+ARG DROAST_VERSION=1.4.11
+RUN set -eux; \
+    case "${TARGETARCH}" in \
+        "arm64") droast_arch="arm64" ;; \
+        "amd64") droast_arch="x86_64" ;; \
+        *) echo "Unsupported architecture: ${TARGETARCH}"; exit 1 ;; \
+    esac; \
+    curl -fsSL "https://github.com/immanuwell/dockerfile-roast/releases/download/${DROAST_VERSION}/droast-linux-${droast_arch}" -o /usr/local/bin/droast; \
+    chmod 0755 /usr/local/bin/droast; \
+    droast --version | grep -F "droast ${DROAST_VERSION}"
+
 # renovate: datasource=github-releases depName=peak/s5cmd extractVersion=^v(?<version>.*)$
 ARG S5CMD_VERSION=2.3.0
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -526,7 +538,7 @@ RUN mkdir -p /etc/coding-agents /etc/codex /etc/claude-code && \
     '- search/edit: rg, ast-grep, jq, yq, xmlstarlet, difft, delta' \
     '- runtimes: python3, node, go, php, composer, uv, uvx, bun' \
     '- package managers: npm, pnpm, yarn, pip, composer' \
-    '- validation: hadolint, shellcheck, yamllint, html-validate' \
+    '- validation: hadolint, droast, shellcheck, yamllint, html-validate' \
     '- infra/storage: docker, docker compose, gh, aws, s5cmd, rclone, restic' \
     '' \
     "- CLIs: uv ${UV_VERSION}, pnpm ${PNPM_VERSION}, yarn ${YARN_VERSION}, bun ${BUN_VERSION}" \

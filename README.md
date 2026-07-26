@@ -27,7 +27,8 @@ See `--help` for the invocation options.
 
 - Agents: Codex, Claude Code, OpenCode, and their ACP commands.
 - Runtimes: Python, Node.js, Go, PHP, Bun, uv, npm, pnpm, Yarn, pip, and Composer.
-- Tools: Git, Docker, Playwright with Chromium, ripgrep, ast-grep, jq, yq, and common linters.
+- Tools: Git, Docker, Playwright with Chromium, ripgrep, ast-grep, jq, yq, Hadolint, droast, and common
+  linters.
 - Infrastructure: GitHub and AWS CLIs, s5cmd, rclone, Restic, and database clients.
 
 See the [Dockerfile](Dockerfile) for the complete, versioned list.
