@@ -72,6 +72,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     docker-ce-cli \
     docker-compose-plugin \
     file \
+    ffmpeg \
     fonts-liberation \
     fzf \
     gh \
