@@ -381,6 +381,30 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
     [ "${#docker_args[@]}" -eq 2 ]
     [ "${docker_args[0]}" = pull ]
     [ "${docker_args[1]}" = test-image ]
+    assert_output 'To update launcher, use update.'
+}
+
+@test "update aliases replace the invoked launcher from master" {
+    local command copy replacement
+    replacement=$BATS_TEST_TMPDIR/replacement
+    printf '#!/usr/bin/env bash\nprintf updated\n' > "$replacement"
+    for command in update up; do
+        copy=$BATS_TEST_TMPDIR/launcher-$command
+        cp "$LAUNCHER" "$copy"
+        curl() {
+            [ "$1" = -fsSL ]
+            [ "$2" = https://raw.githubusercontent.com/selim13/docker-coding-agents/master/coding-agents-container.sh ]
+            [ "$3" = -o ]
+            cp "$replacement" "$4"
+        }
+        export -f curl
+        export replacement
+        run "$copy" "$command"
+        assert_success
+        assert_output 'To update image, use pull.'
+        cmp "$replacement" "$copy"
+        [ -x "$copy" ]
+    done
 }
 
 @test "dry-run prints a reusable command without Docker or filesystem changes" {

@@ -4,6 +4,7 @@ set -eo pipefail
 
 readonly PROGRAM=${0##*/}
 readonly DEFAULT_IMAGE=ghcr.io/selim13/coding-agents:latest
+readonly UPDATE_URL=https://raw.githubusercontent.com/selim13/docker-coding-agents/master/coding-agents-container.sh
 INVOCATION_DIR=$(pwd -P)
 readonly INVOCATION_DIR
 : "${HOME:?HOME must be set}"
@@ -24,6 +25,7 @@ Commands:
   shell                     run zsh
   run COMMAND [ARG...]      run an arbitrary image command
   pull                      pull the configured image
+  update | up               replace launcher from master
 
 Options:
   --workspace DIR           mounted workspace root; default: current directory
@@ -272,6 +274,21 @@ command_name=$1
 shift
 command_args=("$@")
 
+case "$command_name" in
+    update|up)
+        [ "${#command_args[@]}" -eq 0 ] || die "$command_name does not accept arguments"
+        launcher=$(canonical_file "$0") || die "launcher is not a readable regular file: $0"
+        temporary=$(mktemp "$launcher.XXXXXX") || die "cannot create launcher update beside: $launcher"
+        trap 'rm -f -- "$temporary"' EXIT
+        curl -fsSL "$UPDATE_URL" -o "$temporary"
+        bash -n "$temporary"
+        chmod 0755 "$temporary"
+        mv -- "$temporary" "$launcher"
+        printf 'To update image, use pull.\n'
+        exit 0
+        ;;
+esac
+
 selected_env_files=()
 if [ "${#cli_env_files[@]}" -gt 0 ]; then
     selected_env_files=("${cli_env_files[@]}")
@@ -474,6 +491,7 @@ if [ "$command_name" = pull ]; then
     [ "${#command_args[@]}" -eq 0 ] || die "pull does not accept arguments"
     docker_command=(docker pull "$image")
     if [ "$dry_run" -eq 1 ]; then print_command "${docker_command[@]}"; exit 0; fi
+    printf 'To update launcher, use update.\n'
     exec "${docker_command[@]}"
 fi
 
