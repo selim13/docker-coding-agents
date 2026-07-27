@@ -699,7 +699,7 @@ if [ "$dry_run" -eq 0 ]; then
     for source in "${bind_sources[@]}"; do [ -d "$source" ] || mkdir -p -- "$source"; done
 fi
 
-docker_args=(run --rm --interactive --network host)
+docker_args=(run --rm --interactive --network host --user root)
 case "$command_name" in
     *-acp) ;;
     *) [ ! -t 0 ] || [ ! -t 1 ] || docker_args+=(--tty) ;;

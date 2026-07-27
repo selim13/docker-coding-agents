@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1.25
+# hadolint global ignore=DL3008
 
 # https://github.com/anthropics/claude-code/blob/main/.devcontainer/Dockerfile
 # https://github.com/openai/codex-universal
@@ -13,6 +14,10 @@ FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
 FROM oven/bun:${BUN_VERSION} AS bun
 
 FROM debian:13
+
+ARG IMAGE_CREATED
+ARG IMAGE_REVISION
+ARG IMAGE_VERSION
 
 LABEL org.opencontainers.image.title="coding-agents" \
       org.opencontainers.image.description="Isolated environment for codex, claude and opencode." \
@@ -33,12 +38,22 @@ ENV TZ="$TZ"
 
 ARG USERNAME=ai
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # Add NodeSource, Docker, and sury.org (PHP) repositories
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y --no-install-recommends curl ca-certificates gnupg2 lsb-release && \
-    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
     install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key -o /etc/apt/keyrings/nodesource.asc && \
+    printf '%s\n' \
+      'Types: deb' \
+      'URIs: https://deb.nodesource.com/node_24.x' \
+      'Suites: nodistro' \
+      'Components: main' \
+      "Architectures: $(dpkg --print-architecture)" \
+      'Signed-By: /etc/apt/keyrings/nodesource.asc' \
+      > /etc/apt/sources.list.d/nodesource.sources && \
     curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
     chmod a+r /etc/apt/keyrings/docker.asc && \
     printf '%s\n' \
@@ -56,7 +71,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 # Create user (uid/gid 1000)
 RUN groupadd --gid 1000 $USERNAME && \
-  useradd --uid 1000 --gid $USERNAME --shell /bin/bash --create-home $USERNAME
+  useradd --uid 1000 --gid $USERNAME --shell /bin/bash --create-home --no-log-init $USERNAME
 
 # Install all packages
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -279,7 +294,7 @@ RUN set -eux; \
     esac; \
     url="https://github.com/Wilfred/difftastic/releases/download/${DIFFT_VERSION}/${archive}"; \
     tmpdir="$(mktemp -d)"; \
-    curl -L "${url}" -o "${tmpdir}/difft.tar.gz"; \
+    curl -fsSL "${url}" -o "${tmpdir}/difft.tar.gz"; \
     tar -xzf "${tmpdir}/difft.tar.gz" -C "${tmpdir}"; \
     install -m 0755 "${tmpdir}/difft" /usr/local/bin/difft; \
     rm -rf "${tmpdir}"
@@ -299,7 +314,7 @@ RUN set -eux; \
     esac; \
     url="https://github.com/BurntSushi/ripgrep/releases/download/${RIPGREP_VERSION}/${archive}"; \
     tmpdir="$(mktemp -d)"; \
-    curl -L "${url}" -o "${tmpdir}/ripgrep.tar.gz"; \
+    curl -fsSL "${url}" -o "${tmpdir}/ripgrep.tar.gz"; \
     tar -xzf "${tmpdir}/ripgrep.tar.gz" -C "${tmpdir}"; \
     install -m 0755 "${tmpdir}/${dirname}/rg" /usr/local/bin/rg; \
     rm -rf "${tmpdir}"
@@ -319,7 +334,7 @@ RUN set -eux; \
     esac; \
     url="https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/${archive}"; \
     tmpdir="$(mktemp -d)"; \
-    curl -L "${url}" -o "${tmpdir}/shellcheck.tar.gz"; \
+    curl -fsSL "${url}" -o "${tmpdir}/shellcheck.tar.gz"; \
     tar -xzf "${tmpdir}/shellcheck.tar.gz" -C "${tmpdir}"; \
     install -m 0755 "${tmpdir}/${dirname}/shellcheck" /usr/local/bin/shellcheck; \
     rm -rf "${tmpdir}"
@@ -338,7 +353,7 @@ RUN set -eux; \
     archive="just-${JUST_VERSION}-${target}.tar.gz"; \
     url="https://github.com/casey/just/releases/download/${JUST_VERSION}/${archive}"; \
     tmpdir="$(mktemp -d)"; \
-    curl -L "${url}" -o "${tmpdir}/just.tar.gz"; \
+    curl -fsSL "${url}" -o "${tmpdir}/just.tar.gz"; \
     tar -xzf "${tmpdir}/just.tar.gz" -C "${tmpdir}"; \
     install -m 0755 "${tmpdir}/just" /usr/local/bin/just; \
     rm -rf "${tmpdir}"
@@ -376,7 +391,7 @@ ARG MARKDOWNIFY_VERSION=1.2.3
 ARG OPENPYXL_VERSION=3.1.5
 # renovate: datasource=pypi depName=pandas
 ARG PANDAS_VERSION=3.0.5
-RUN pip install --break-system-packages \
+RUN pip install --no-cache-dir --break-system-packages \
   markdownify==${MARKDOWNIFY_VERSION} \
   openpyxl==${OPENPYXL_VERSION} \
   pandas==${PANDAS_VERSION} \
@@ -385,30 +400,33 @@ RUN pip install --break-system-packages \
 ### PHP ###
 ARG PHP_VERSIONS="8.5 8.4 8.3 8.2 8.1"
 
+# hadolint ignore=SC2086
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
     for v in $PHP_VERSIONS; do \
         apt-get install -y --no-install-recommends \
-            php${v}-cli \
-            php${v}-common \
-            php${v}-mbstring \
-            php${v}-xml \
-            php${v}-curl \
-            php${v}-zip \
-            php${v}-mysql \
-            php${v}-pgsql \
-            php${v}-sqlite3 \
-            php${v}-gd \
-            php${v}-bcmath \
-            php${v}-intl; \
+            "php${v}-cli" \
+            "php${v}-common" \
+            "php${v}-mbstring" \
+            "php${v}-xml" \
+            "php${v}-curl" \
+            "php${v}-zip" \
+            "php${v}-mysql" \
+            "php${v}-pgsql" \
+            "php${v}-sqlite3" \
+            "php${v}-gd" \
+            "php${v}-bcmath" \
+            "php${v}-intl"; \
     done && \
-    update-alternatives --set php /usr/bin/php${PHP_VERSIONS%% *}
+    update-alternatives --set php "/usr/bin/php${PHP_VERSIONS%% *}"
 
 # Composer
 # renovate: datasource=github-releases depName=composer/composer
 ARG COMPOSER_VERSION=2.10.2
-RUN curl -fsSL https://getcomposer.org/installer | php -- --version="${COMPOSER_VERSION}" --install-dir=/usr/local/bin --filename=composer
+RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSER_VERSION}/composer.phar" -o /usr/local/bin/composer && \
+    chmod 0755 /usr/local/bin/composer && \
+    composer --version | grep -F "Composer version ${COMPOSER_VERSION}"
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
@@ -429,8 +447,9 @@ ENV NODE_PATH=$NPM_CONFIG_PREFIX/lib/node_modules
 ENV COMPOSER_HOME=/home/$USERNAME/.config/composer
 ENV PNPM_HOME=/home/$USERNAME/.local/share/pnpm
 ENV CODING_AGENTS_PATH=/usr/local/go/bin:/home/$USERNAME/.local/bin:/home/$USERNAME/.config/composer/vendor/bin:/usr/local/share/npm-global/bin:$PNPM_HOME/bin
-ENV PATH=$PATH:$CODING_AGENTS_PATH
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$CODING_AGENTS_PATH
 
+# hadolint ignore=SC2016
 RUN printf '%s\n' \
     '' \
     '# Keep login-shell PATH in sync with the Docker image environment.' \
@@ -447,10 +466,8 @@ RUN printf '%s\n' \
     '  unset old_ifs path_entry' \
     '  export PATH' \
     'fi' \
-    >> /home/$USERNAME/.profile
-
-# Pin PNPM's store directory to match the mounted host's one
-RUN pnpm config set store-dir /home/ai/.local/share/pnpm/store/v${PNPM_VERSION%%.*} --global
+    >> /home/$USERNAME/.profile && \
+    pnpm config set store-dir /home/ai/.local/share/pnpm/store/v${PNPM_VERSION%%.*} --global
 
 # renovate: datasource=github-releases depName=composer-unused/composer-unused
 ENV COMPOSER_UNUSED_VERSION=0.9.6
@@ -469,13 +486,15 @@ ENV COLORTERM=truecolor
 # Default powerline10k theme
 # renovate: datasource=github-releases depName=deluan/zsh-in-docker extractVersion=^v(?<version>.*)$
 ARG ZSH_IN_DOCKER_VERSION=1.2.1
-RUN sh -c "$(curl -fsSL https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
-  -p git \
-  -p fzf \
-  -a "source /usr/share/doc/fzf/examples/key-bindings.zsh" \
-  -a "source /usr/share/doc/fzf/examples/completion.zsh" \
-  -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
-  -x
+RUN curl -fsSL "https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh" -o /tmp/zsh-in-docker.sh && \
+    sh /tmp/zsh-in-docker.sh \
+      -p git \
+      -p fzf \
+      -a "source /usr/share/doc/fzf/examples/key-bindings.zsh" \
+      -a "source /usr/share/doc/fzf/examples/completion.zsh" \
+      -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
+      -x && \
+    rm /tmp/zsh-in-docker.sh
 
 COPY --from=uv /uv /uvx /bin/
 COPY --from=bun /usr/local/bin/bun /usr/local/bin/bun
@@ -485,11 +504,12 @@ ENV UV_NO_PROGRESS=1
 # Configure playwright
 ENV PLAYWRIGHT_BROWSERS_PATH="/home/$USERNAME/.cache/ms-playwright/"
 ARG INSTALL_CHROME=true
-RUN mkdir -p /home/$USERNAME/.config/google-chrome/Crashpad
-RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g playwright@${PLAYWRIGHT_VERSION}
-RUN if [ "$INSTALL_CHROME" = "true" ]; then \
-    python3 -m playwright install chromium; \
-  fi
+RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
+    mkdir -p /home/$USERNAME/.config/google-chrome/Crashpad && \
+    PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install -g playwright@${PLAYWRIGHT_VERSION} && \
+    if [ "$INSTALL_CHROME" = "true" ]; then \
+      python3 -m playwright install chromium; \
+    fi
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
@@ -510,7 +530,8 @@ ARG HTML_VALIDATE_VERSION=11.5.6
 ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
 ARG SENTRY_VERSION=0.38.0
-RUN npm install -g \
+RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
+    npm install -g \
     opencode-ai@${OPENCODE_VERSION} \
     @openai/codex@${CODEX_VERSION} \
     @agentclientprotocol/codex-acp@${CODEX_ACP_VERSION} \
@@ -555,3 +576,6 @@ RUN mkdir -p /etc/coding-agents /etc/codex /etc/claude-code && \
     printf '%s\n' '"""'; \
   } > /etc/codex/managed_config.toml && \
   cp /etc/coding-agents/context.md /etc/claude-code/CLAUDE.md
+
+USER $USERNAME
+CMD ["zsh"]
