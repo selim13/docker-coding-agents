@@ -6,9 +6,18 @@ An environment to run coding agents:
 - Claude Code
 - Codex
 
-## Usage
+## Quick install
 
-Just grab and execute `coding-agents-container.sh`.
+```sh
+mkdir -p ~/.local/bin ~/.config
+curl -fsSL https://raw.githubusercontent.com/selim13/docker-coding-agents/master/coding-agents-container.sh \
+  -o ~/.local/bin/coding-agents-container.sh
+chmod +x ~/.local/bin/coding-agents-container.sh
+curl -fsSL https://raw.githubusercontent.com/selim13/docker-coding-agents/master/.env.coding-agents.example \
+  -o ~/.config/env.coding-agents
+```
+
+## Usage
 
 ```sh
 coding-agents-container.sh codex
