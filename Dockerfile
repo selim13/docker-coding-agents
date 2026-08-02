@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.25
+# syntax=docker/dockerfile:1.26
 # hadolint global ignore=DL3008
 
 # https://github.com/anthropics/claude-code/blob/main/.devcontainer/Dockerfile
@@ -6,7 +6,7 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.12.0
+ARG UV_VERSION=0.12.1
 # renovate: datasource=docker depName=oven/bun
 ARG BUN_VERSION=1.3.14
 
@@ -167,7 +167,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     zsh
 
 # renovate: datasource=github-releases depName=hadolint/hadolint extractVersion=^v(?<version>.*)$
-ARG HADOLINT_VERSION=2.14.0
+ARG HADOLINT_VERSION=2.15.1
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") hadolint_arch="arm64" ;; \
@@ -179,7 +179,7 @@ RUN set -eux; \
     hadolint --version | grep -F "Haskell Dockerfile Linter ${HADOLINT_VERSION}"
 
 # renovate: datasource=github-releases depName=immanuwell/dockerfile-roast
-ARG DROAST_VERSION=1.4.11
+ARG DROAST_VERSION=1.4.12
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") droast_arch="arm64" ;; \
@@ -384,7 +384,7 @@ RUN set -eux; \
     rm -rf /tmp/golangci-lint.tar.gz "/tmp/golangci-lint-${GOLANGCI_LINT_VERSION}-linux-${goarch}"
 
 # renovate: datasource=pypi depName=playwright
-ARG PLAYWRIGHT_VERSION=1.61.0
+ARG PLAYWRIGHT_VERSION=1.62.0
 # renovate: datasource=pypi depName=markdownify
 ARG MARKDOWNIFY_VERSION=1.2.3
 # renovate: datasource=pypi depName=openpyxl
@@ -513,15 +513,15 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.18.9
+ARG OPENCODE_VERSION=1.18.11
 # renovate: datasource=npm depName=@openai/codex
 ARG CODEX_VERSION=0.146.0
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=1.1.7
+ARG CODEX_ACP_VERSION=1.1.8
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
 ARG CLAUDE_CODE_VERSION=2.1.220
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.63.0
+ARG CLAUDE_AGENT_ACP_VERSION=0.64.0
 # renovate: datasource=npm depName=@ast-grep/cli
 ARG AST_GREP_CLI_VERSION=0.45.0
 # renovate: datasource=npm depName=html-validate
@@ -529,7 +529,7 @@ ARG HTML_VALIDATE_VERSION=11.6.0
 # renovate: datasource=npm depName=mcpdoc
 ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
-ARG SENTRY_VERSION=0.39.0
+ARG SENTRY_VERSION=0.40.0
 RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
     npm install -g \
     opencode-ai@${OPENCODE_VERSION} \
