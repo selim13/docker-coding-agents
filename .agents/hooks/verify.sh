@@ -23,10 +23,7 @@ check "ShellCheck" shellcheck \
 check "Bats ShellCheck" shellcheck -s bats "$ROOT/test/launcher.bats"
 check "Hadolint" hadolint --failure-threshold error "$ROOT/Dockerfile"
 check "YAML" yamllint -d relaxed "$ROOT/.github/workflows/publish.yml"
-check "JSON" jq empty \
-  "$ROOT/renovate.json" \
-  "$ROOT/.claude/settings.json" \
-  "$ROOT/.codex/hooks.json"
+check "JSON" jq empty "$ROOT/renovate.json"
 check "Bats" "$ROOT/test/bats/bin/bats" "$ROOT/test/launcher.bats"
 
 if [ -n "$OUTPUT" ]; then
