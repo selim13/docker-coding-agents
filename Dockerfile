@@ -6,9 +6,9 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.12.3
+ARG UV_VERSION=0.12.5
 # renovate: datasource=docker depName=oven/bun
-ARG BUN_VERSION=1.3.14
+ARG BUN_VERSION=1.4.0
 
 FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
 FROM oven/bun:${BUN_VERSION} AS bun
@@ -179,7 +179,7 @@ RUN set -eux; \
     hadolint --version | grep -F "Haskell Dockerfile Linter ${HADOLINT_VERSION}"
 
 # renovate: datasource=github-releases depName=immanuwell/dockerfile-roast
-ARG DROAST_VERSION=1.4.13
+ARG DROAST_VERSION=1.6.1
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") droast_arch="arm64" ;; \
@@ -359,7 +359,7 @@ RUN set -eux; \
     rm -rf "${tmpdir}"
 
 # renovate: datasource=golang-version depName=go
-ENV GO_VERSION=1.26.5
+ENV GO_VERSION=1.27.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") goarch="arm64" ;; \
@@ -371,7 +371,7 @@ RUN set -eux; \
     rm /tmp/go.tar.gz
 
 # renovate: datasource=github-releases depName=golangci/golangci-lint extractVersion=^v(?<version>.*)$
-ENV GOLANGCI_LINT_VERSION=2.12.2
+ENV GOLANGCI_LINT_VERSION=2.13.1
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") goarch="arm64" ;; \
@@ -430,7 +430,7 @@ RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSE
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=11.20.0
+ARG PNPM_VERSION=11.22.0
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.18.0
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
@@ -513,19 +513,19 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.18.15
+ARG OPENCODE_VERSION=1.18.19
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.147.0
+ARG CODEX_VERSION=0.148.0
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=1.1.14
+ARG CODEX_ACP_VERSION=1.6.2
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.226
+ARG CLAUDE_CODE_VERSION=2.1.237
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.66.0
+ARG CLAUDE_AGENT_ACP_VERSION=0.70.0
 # renovate: datasource=npm depName=@ast-grep/cli
 ARG AST_GREP_CLI_VERSION=0.45.1
 # renovate: datasource=npm depName=html-validate
-ARG HTML_VALIDATE_VERSION=11.6.2
+ARG HTML_VALIDATE_VERSION=11.8.0
 # renovate: datasource=npm depName=mcpdoc
 ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
