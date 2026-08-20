@@ -20,7 +20,7 @@ Usage:
   $PROGRAM [OPTIONS] COMMAND [ARG...]
 
 Commands:
-  codex | claude | opencode
+  codex | claude | dsh | opencode
   codex-acp | claude-acp | opencode-acp
   shell                     run zsh
   run COMMAND [ARG...]      run an arbitrary image command
@@ -171,6 +171,7 @@ known_key() {
         CODING_AGENTS_WORKSPACE|CODING_AGENTS_WORKDIR|CODING_AGENTS_FD_BINARY|CODING_AGENTS_IMAGE|CODING_AGENTS_NO_X11|CODING_AGENTS_DRY_RUN) return 0 ;;
         CODING_AGENTS_CODEX_HTTP_PROXY|CODING_AGENTS_CODEX_HTTPS_PROXY|CODING_AGENTS_CODEX_NO_PROXY|CODING_AGENTS_CODEX_TZ) return 0 ;;
         CODING_AGENTS_CLAUDE_HTTP_PROXY|CODING_AGENTS_CLAUDE_HTTPS_PROXY|CODING_AGENTS_CLAUDE_NO_PROXY|CODING_AGENTS_CLAUDE_TZ) return 0 ;;
+        CODING_AGENTS_DSH_HTTP_PROXY|CODING_AGENTS_DSH_HTTPS_PROXY|CODING_AGENTS_DSH_NO_PROXY|CODING_AGENTS_DSH_TZ) return 0 ;;
         CODING_AGENTS_OPENCODE_HTTP_PROXY|CODING_AGENTS_OPENCODE_HTTPS_PROXY|CODING_AGENTS_OPENCODE_NO_PROXY|CODING_AGENTS_OPENCODE_TZ) return 0 ;;
     esac
     valid_numbered_key "$1"
@@ -440,7 +441,7 @@ for file in "${env_files[@]}"; do
             CODING_AGENTS_IMAGE) cfg_image_set=1; cfg_image=$value ;;
             CODING_AGENTS_NO_X11) cfg_no_x11_set=1; cfg_no_x11=$value ;;
             CODING_AGENTS_DRY_RUN) cfg_dry_run_set=1; cfg_dry_run=$value ;;
-            CODING_AGENTS_CODEX_*|CODING_AGENTS_CLAUDE_*|CODING_AGENTS_OPENCODE_*) set_agent_value "$key" "$value" ;;
+            CODING_AGENTS_CODEX_*|CODING_AGENTS_CLAUDE_*|CODING_AGENTS_DSH_*|CODING_AGENTS_OPENCODE_*) set_agent_value "$key" "$value" ;;
         esac
         i=$((i + 1))
     done
@@ -528,6 +529,7 @@ fi
 case "$command_name" in
     codex) agent=CODEX; image_command=(codex "${command_args[@]}") ;;
     claude) agent=CLAUDE; image_command=(claude "${command_args[@]}") ;;
+    dsh) agent=DSH; image_command=(dsh "${command_args[@]}") ;;
     opencode) agent=OPENCODE; image_command=(opencode "${command_args[@]}") ;;
     codex-acp) agent=CODEX; image_command=(codex-acp "${command_args[@]}") ;;
     claude-acp) agent=CLAUDE; image_command=(claude-agent-acp "${command_args[@]}") ;;
@@ -737,6 +739,10 @@ fixed_sources=(
     "$HOME/.claude"
     "$HOME/.codex"
     "$HOME/.codex"
+    "$HOME/.dsh"
+    "$HOME/.dsh"
+    "$HOME/.agents"
+    "$HOME/.agents"
 )
 fixed_destinations=(
     /home/ai/.config/opencode
@@ -750,6 +756,10 @@ fixed_destinations=(
     "$HOME/.claude"
     /home/ai/.codex
     "$HOME/.codex"
+    /home/ai/.dsh
+    "$HOME/.dsh"
+    /home/ai/.agents
+    "$HOME/.agents"
 )
 fixed_mount_destinations=()
 i=0

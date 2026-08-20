@@ -5,6 +5,7 @@ An environment to run coding agents:
 - OpenCode
 - Claude Code
 - Codex
+- DeepSeek Harness
 
 ## Quick install
 
@@ -26,7 +27,7 @@ coding-agents-container.sh codex
 A new Codex instance will be spawned inside a Docker container, with the
 current working directory mounted as its working directory.
 
-By default, the container mounts your Codex, Claude Code, and OpenCode configuration
+By default, the container mounts your Codex, Claude Code, DeepSeek Harness, and OpenCode configuration
 directories into the container. Use `--volume` or `CODING_AGENTS_VOLUME` to override
 the paths.
 
@@ -34,7 +35,7 @@ See `--help` for the invocation options.
 
 ## Installed software
 
-- Agents: Codex, Claude Code, OpenCode, and their ACP commands.
+- Agents: Codex, Claude Code, DeepSeek Harness, OpenCode, and their ACP commands.
 - Runtimes: Python, Node.js, Go, PHP, Bun, uv, npm, pnpm, Yarn, pip, and Composer.
 - Tools: Git, Docker, Playwright with Chromium, ripgrep, ast-grep, jq, yq, Hadolint, droast, and common
   linters.

@@ -20,7 +20,7 @@ ARG IMAGE_REVISION
 ARG IMAGE_VERSION
 
 LABEL org.opencontainers.image.title="coding-agents" \
-      org.opencontainers.image.description="Isolated environment for codex, claude and opencode." \
+      org.opencontainers.image.description="Isolated environment for codex, claude, dsh and opencode." \
       org.opencontainers.image.authors="Dmitry Seleznev <selim013@gmail.com>" \
       org.opencontainers.image.source="https://github.com/selim13/docker-coding-agents" \
       org.opencontainers.image.url="https://github.com/selim13/docker-coding-agents" \
@@ -522,6 +522,8 @@ ARG CODEX_ACP_VERSION=1.6.2
 ARG CLAUDE_CODE_VERSION=2.1.237
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
 ARG CLAUDE_AGENT_ACP_VERSION=0.70.0
+# renovate: datasource=npm depName=@deepseek-ai/dsh
+ARG DSH_VERSION=0.1.0-rc.7
 # renovate: datasource=npm depName=@ast-grep/cli
 ARG AST_GREP_CLI_VERSION=0.45.1
 # renovate: datasource=npm depName=html-validate
@@ -537,6 +539,7 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
     @agentclientprotocol/codex-acp@${CODEX_ACP_VERSION} \
     @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} \
     @agentclientprotocol/claude-agent-acp@${CLAUDE_AGENT_ACP_VERSION} \
+    @deepseek-ai/dsh@${DSH_VERSION} \
     @ast-grep/cli@${AST_GREP_CLI_VERSION} \
     html-validate@${HTML_VALIDATE_VERSION} \
     mcpdoc@${MCPDOC_VERSION} \
@@ -556,7 +559,7 @@ RUN mkdir -p /etc/coding-agents /etc/codex /etc/claude-code && \
     "- default user: ${USERNAME} (uid/gid 1000)" \
     '' \
     '## Key Tools' \
-    "- agents: codex ${CODEX_VERSION}, claude-code ${CLAUDE_CODE_VERSION}, opencode ${OPENCODE_VERSION}" \
+    "- agents: codex ${CODEX_VERSION}, claude-code ${CLAUDE_CODE_VERSION}, dsh ${DSH_VERSION}, opencode ${OPENCODE_VERSION}" \
     '- search/edit: rg, ast-grep, jq, yq, xmlstarlet, difft, delta' \
     '- runtimes: python3, node, go, php, composer, uv, uvx, bun' \
     '- package managers: npm, pnpm, yarn, pip, composer' \

@@ -86,6 +86,7 @@ volume_args() {
     local route
     for route in \
         'claude|claude' \
+        'dsh|dsh' \
         'opencode|opencode' \
         'codex-acp|codex-acp' \
         'claude-acp|claude-agent-acp' \
@@ -212,12 +213,17 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
 }
 
 @test "per-agent file override applies only to its agent and inherited wins" {
-    printf 'CODING_AGENTS_CODEX_HTTP_PROXY=file-proxy\nCODING_AGENTS_CODEX_TZ=UTC\n' > "$WORKSPACE/config.env"
+    printf 'CODING_AGENTS_CODEX_HTTP_PROXY=file-proxy\nCODING_AGENTS_CODEX_TZ=UTC\nCODING_AGENTS_DSH_HTTP_PROXY=dsh-proxy\n' > "$WORKSPACE/config.env"
     CODING_AGENTS_CODEX_HTTP_PROXY=env-proxy run "$LAUNCHER" --workspace "$WORKSPACE" --env "$WORKSPACE/config.env" codex
     assert_success
     load_args
     assert_pair --env HTTP_PROXY=env-proxy
     assert_pair --env TZ=UTC
+
+    run "$LAUNCHER" --workspace "$WORKSPACE" --env "$WORKSPACE/config.env" dsh
+    assert_success
+    load_args
+    assert_pair --env HTTP_PROXY=dsh-proxy
 
     run "$LAUNCHER" --workspace "$WORKSPACE" --env "$WORKSPACE/config.env" claude
     assert_success
@@ -340,22 +346,26 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
     refute_arg "$HOME/.claude.json:/home/ai/.claude.json"
 }
 
-@test "only harness state is mounted by default and volumes override it" {
-    mkdir -p "$HOME/.config/opencode" "$HOME/.codex" "$HOME/.cache/uv"
+@test "only agent state is mounted by default and volumes override it" {
+    mkdir -p "$HOME/.config/opencode" "$HOME/.codex" "$HOME/.dsh" "$HOME/.agents" "$HOME/.cache/uv"
     run "$LAUNCHER" --workspace "$WORKSPACE" codex
     assert_success
     load_args
     assert_pair --volume "$HOME/.config/opencode:/home/ai/.config/opencode"
     assert_pair --volume "$HOME/.config/opencode:$HOME/.config/opencode"
     assert_pair --volume "$HOME/.codex:/home/ai/.codex"
+    assert_pair --volume "$HOME/.dsh:/home/ai/.dsh"
+    assert_pair --volume "$HOME/.dsh:$HOME/.dsh"
+    assert_pair --volume "$HOME/.agents:/home/ai/.agents"
+    assert_pair --volume "$HOME/.agents:$HOME/.agents"
     refute_arg "$HOME/.cache/uv:/home/ai/.cache/uv"
 
-    printf 'CODING_AGENTS_VOLUME=other-codex:/home/ai/.codex\n' > "$WORKSPACE/config.env"
+    printf 'CODING_AGENTS_VOLUME=other-dsh:/home/ai/.dsh\n' > "$WORKSPACE/config.env"
     run "$LAUNCHER" --workspace "$WORKSPACE" --env "$WORKSPACE/config.env" codex
     assert_success
     load_args
-    assert_pair --volume other-codex:/home/ai/.codex
-    refute_arg "$HOME/.codex:/home/ai/.codex"
+    assert_pair --volume other-dsh:/home/ai/.dsh
+    refute_arg "$HOME/.dsh:/home/ai/.dsh"
 }
 
 @test "X11 requires display socket and authority and no-x11 wins" {
