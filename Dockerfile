@@ -6,7 +6,7 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.12.5
+ARG UV_VERSION=0.12.6
 # renovate: datasource=docker depName=oven/bun
 ARG BUN_VERSION=1.4.0
 
@@ -423,14 +423,14 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 # Composer
 # renovate: datasource=github-releases depName=composer/composer
-ARG COMPOSER_VERSION=2.10.2
+ARG COMPOSER_VERSION=2.10.3
 RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSER_VERSION}/composer.phar" -o /usr/local/bin/composer && \
     chmod 0755 /usr/local/bin/composer && \
     composer --version | grep -F "Composer version ${COMPOSER_VERSION}"
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=11.22.0
+ARG PNPM_VERSION=11.24.0
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.18.0
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
@@ -513,25 +513,25 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.18.19
+ARG OPENCODE_VERSION=1.18.23
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.148.0
+ARG CODEX_VERSION=0.150.1
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=1.6.2
+ARG CODEX_ACP_VERSION=1.7.0
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.237
+ARG CLAUDE_CODE_VERSION=2.1.247
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
 ARG CLAUDE_AGENT_ACP_VERSION=0.70.0
 # renovate: datasource=npm depName=@deepseek-ai/dsh
-ARG DSH_VERSION=0.1.0-rc.7
+ARG DSH_VERSION=0.1.0-rc.8
 # renovate: datasource=npm depName=@ast-grep/cli
-ARG AST_GREP_CLI_VERSION=0.45.1
+ARG AST_GREP_CLI_VERSION=0.45.2
 # renovate: datasource=npm depName=html-validate
-ARG HTML_VALIDATE_VERSION=11.8.0
+ARG HTML_VALIDATE_VERSION=11.10.0
 # renovate: datasource=npm depName=mcpdoc
 ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
-ARG SENTRY_VERSION=0.42.2
+ARG SENTRY_VERSION=0.43.0
 RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
     npm install -g \
     opencode-ai@${OPENCODE_VERSION} \
