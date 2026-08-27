@@ -33,6 +33,14 @@ the paths.
 
 See `--help` for the invocation options.
 
+### Headed Playwright tests
+
+For unattended headed tests, run Playwright under the bundled virtual display:
+
+```sh
+xvfb-run -a --server-args="-screen 0 1920x1080x24" npx playwright test --headed
+```
+
 ## Installed software
 
 - Agents: Codex, Claude Code, DeepSeek Harness, OpenCode, and their ACP commands.

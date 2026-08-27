@@ -160,6 +160,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     xmlstarlet \
     xz-utils \
     xsel \
+    xvfb \
     yamllint \
     yq \
     zip \
