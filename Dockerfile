@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.26
+# syntax=docker/dockerfile:1.27
 # hadolint global ignore=DL3008
 
 # https://github.com/anthropics/claude-code/blob/main/.devcontainer/Dockerfile
@@ -6,9 +6,9 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.12.6
+ARG UV_VERSION=0.12.9
 # renovate: datasource=docker depName=oven/bun
-ARG BUN_VERSION=1.4.0
+ARG BUN_VERSION=1.4.1
 
 FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
 FROM oven/bun:${BUN_VERSION} AS bun
@@ -180,7 +180,7 @@ RUN set -eux; \
     hadolint --version | grep -F "Haskell Dockerfile Linter ${HADOLINT_VERSION}"
 
 # renovate: datasource=github-releases depName=immanuwell/dockerfile-roast
-ARG DROAST_VERSION=1.6.1
+ARG DROAST_VERSION=1.7.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") droast_arch="arm64" ;; \
@@ -360,7 +360,7 @@ RUN set -eux; \
     rm -rf "${tmpdir}"
 
 # renovate: datasource=golang-version depName=go
-ENV GO_VERSION=1.27.0
+ENV GO_VERSION=1.27.1
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") goarch="arm64" ;; \
@@ -372,7 +372,7 @@ RUN set -eux; \
     rm /tmp/go.tar.gz
 
 # renovate: datasource=github-releases depName=golangci/golangci-lint extractVersion=^v(?<version>.*)$
-ENV GOLANGCI_LINT_VERSION=2.13.1
+ENV GOLANGCI_LINT_VERSION=2.13.2
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") goarch="arm64" ;; \
@@ -431,7 +431,7 @@ RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSE
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=11.24.0
+ARG PNPM_VERSION=11.25.0
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.18.0
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
@@ -514,25 +514,25 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.18.23
+ARG OPENCODE_VERSION=1.18.28
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.150.1
+ARG CODEX_VERSION=0.153.2
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=1.7.0
+ARG CODEX_ACP_VERSION=1.9.0
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.247
+ARG CLAUDE_CODE_VERSION=2.1.260
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.70.0
+ARG CLAUDE_AGENT_ACP_VERSION=0.74.0
 # renovate: datasource=npm depName=@deepseek-ai/dsh
 ARG DSH_VERSION=0.1.0-rc.8
 # renovate: datasource=npm depName=@ast-grep/cli
-ARG AST_GREP_CLI_VERSION=0.45.2
+ARG AST_GREP_CLI_VERSION=0.45.3
 # renovate: datasource=npm depName=html-validate
-ARG HTML_VALIDATE_VERSION=11.10.0
+ARG HTML_VALIDATE_VERSION=11.13.0
 # renovate: datasource=npm depName=mcpdoc
 ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
-ARG SENTRY_VERSION=0.43.0
+ARG SENTRY_VERSION=0.44.1
 RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
     npm install -g \
     opencode-ai@${OPENCODE_VERSION} \
