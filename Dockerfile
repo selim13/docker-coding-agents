@@ -167,6 +167,17 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     zstd \
     zsh
 
+# renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
+ARG KUBECTL_VERSION=1.36.4
+RUN set -eux; \
+    url="https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl"; \
+    curl -fsSL "${url}" -o /tmp/kubectl; \
+    curl -fsSL "${url}.sha256" -o /tmp/kubectl.sha256; \
+    echo "$(cat /tmp/kubectl.sha256)  /tmp/kubectl" | sha256sum --check; \
+    install -m 0755 /tmp/kubectl /usr/local/bin/kubectl; \
+    rm /tmp/kubectl /tmp/kubectl.sha256; \
+    kubectl version --client -o yaml | grep -F "gitVersion: v${KUBECTL_VERSION}"
+
 # renovate: datasource=github-releases depName=hadolint/hadolint extractVersion=^v(?<version>.*)$
 ARG HADOLINT_VERSION=2.15.1
 RUN set -eux; \
@@ -565,7 +576,7 @@ RUN mkdir -p /etc/coding-agents /etc/codex /etc/claude-code && \
     '- runtimes: python3, node, go, php, composer, uv, uvx, bun' \
     '- package managers: npm, pnpm, yarn, pip, composer' \
     '- validation: hadolint, droast, shellcheck, yamllint, html-validate' \
-    '- infra/storage: docker, docker compose, gh, aws, s5cmd, rclone, restic' \
+    '- infra/storage: kubectl, docker, docker compose, gh, aws, s5cmd, rclone, restic' \
     '' \
     "- CLIs: uv ${UV_VERSION}, pnpm ${PNPM_VERSION}, yarn ${YARN_VERSION}, bun ${BUN_VERSION}" \
     "- python packages: playwright ${PLAYWRIGHT_VERSION}, pandas ${PANDAS_VERSION}, openpyxl ${OPENPYXL_VERSION}, markdownify ${MARKDOWNIFY_VERSION}" \
