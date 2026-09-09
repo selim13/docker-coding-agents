@@ -6,9 +6,9 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.12.9
+ARG UV_VERSION=0.12.11
 # renovate: datasource=docker depName=oven/bun
-ARG BUN_VERSION=1.4.1
+ARG BUN_VERSION=1.4.2
 
 FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
 FROM oven/bun:${BUN_VERSION} AS bun
@@ -168,7 +168,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     zsh
 
 # renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
-ARG KUBECTL_VERSION=1.36.4
+ARG KUBECTL_VERSION=1.37.0
 RUN set -eux; \
     url="https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl"; \
     curl -fsSL "${url}" -o /tmp/kubectl; \
@@ -442,7 +442,7 @@ RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSE
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=11.25.0
+ARG PNPM_VERSION=11.26.0
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.18.0
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
@@ -525,21 +525,21 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.18.28
+ARG OPENCODE_VERSION=1.18.30
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.153.2
+ARG CODEX_VERSION=0.153.4
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=1.9.0
+ARG CODEX_ACP_VERSION=1.10.0
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.260
+ARG CLAUDE_CODE_VERSION=2.1.266
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.74.0
+ARG CLAUDE_AGENT_ACP_VERSION=0.75.1
 # renovate: datasource=npm depName=@deepseek-ai/dsh
 ARG DSH_VERSION=0.1.0-rc.8
 # renovate: datasource=npm depName=@ast-grep/cli
 ARG AST_GREP_CLI_VERSION=0.45.3
 # renovate: datasource=npm depName=html-validate
-ARG HTML_VALIDATE_VERSION=11.13.0
+ARG HTML_VALIDATE_VERSION=11.15.0
 # renovate: datasource=npm depName=mcpdoc
 ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
