@@ -6,7 +6,7 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.12.15
+ARG UV_VERSION=0.12.17
 # renovate: datasource=docker depName=oven/bun
 ARG BUN_VERSION=1.4.2
 
@@ -294,7 +294,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
   rm "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb"
 
 # renovate: datasource=github-releases depName=Wilfred/difftastic
-ENV DIFFT_VERSION=0.70.0
+ENV DIFFT_VERSION=0.71.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") \
@@ -402,7 +402,7 @@ ARG MARKDOWNIFY_VERSION=1.2.3
 # renovate: datasource=pypi depName=openpyxl
 ARG OPENPYXL_VERSION=3.1.5
 # renovate: datasource=pypi depName=pandas
-ARG PANDAS_VERSION=3.0.5
+ARG PANDAS_VERSION=3.0.6
 RUN pip install --no-cache-dir --break-system-packages \
   markdownify==${MARKDOWNIFY_VERSION} \
   openpyxl==${OPENPYXL_VERSION} \
@@ -443,6 +443,7 @@ RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSE
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
 ARG PNPM_VERSION=12.5.1
+
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.18.0
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
@@ -525,15 +526,15 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.18.31
+ARG OPENCODE_VERSION=1.18.32
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.154.0
+ARG CODEX_VERSION=0.155.1
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
 ARG CODEX_ACP_VERSION=1.12.0
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.273
+ARG CLAUDE_CODE_VERSION=2.1.278
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.78.0
+ARG CLAUDE_AGENT_ACP_VERSION=0.79.0
 # renovate: datasource=npm depName=@deepseek-ai/dsh
 ARG DSH_VERSION=0.1.0-rc.8
 # renovate: datasource=npm depName=@ast-grep/cli
