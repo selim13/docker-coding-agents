@@ -298,9 +298,9 @@ ENV DIFFT_VERSION=0.71.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") \
-        archive="difft-aarch64-unknown-linux-gnu.tar.gz" ;; \
+        archive="difft-${DIFFT_VERSION}-aarch64-unknown-linux-gnu.tar.gz" ;; \
         "amd64") \
-        archive="difft-x86_64-unknown-linux-gnu.tar.gz" ;; \
+        archive="difft-${DIFFT_VERSION}-x86_64-unknown-linux-gnu.tar.gz" ;; \
         *) \
         echo "Unsupported architecture: ${TARGETARCH}"; exit 1 ;; \
     esac; \
