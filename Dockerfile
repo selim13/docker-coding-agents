@@ -6,7 +6,7 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.12.17
+ARG UV_VERSION=0.12.18
 # renovate: datasource=docker depName=oven/bun
 ARG BUN_VERSION=1.4.2
 
@@ -168,7 +168,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     zsh
 
 # renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
-ARG KUBECTL_VERSION=1.37.0
+ARG KUBECTL_VERSION=1.37.1
 RUN set -eux; \
     url="https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl"; \
     curl -fsSL "${url}" -o /tmp/kubectl; \
@@ -442,7 +442,7 @@ RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSE
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=12.5.1
+ARG PNPM_VERSION=12.6.0
 
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.18.0
@@ -528,13 +528,13 @@ ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
 ARG OPENCODE_VERSION=1.18.32
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.155.1
+ARG CODEX_VERSION=0.156.1
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=1.12.0
+ARG CODEX_ACP_VERSION=1.13.1
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.278
+ARG CLAUDE_CODE_VERSION=2.1.281
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.79.0
+ARG CLAUDE_AGENT_ACP_VERSION=0.81.1
 # renovate: datasource=npm depName=@deepseek-ai/dsh
 ARG DSH_VERSION=0.1.0-rc.8
 # renovate: datasource=npm depName=@ast-grep/cli
