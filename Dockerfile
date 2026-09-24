@@ -545,6 +545,8 @@ ARG HTML_VALIDATE_VERSION=11.16.0
 ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
 ARG SENTRY_VERSION=0.45.0
+# renovate: datasource=npm depName=@fission-ai/openspec
+ARG OPENSPEC_VERSION=1.13.2
 RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
     npm install -g \
     opencode-ai@${OPENCODE_VERSION} \
@@ -556,6 +558,7 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
     @ast-grep/cli@${AST_GREP_CLI_VERSION} \
     html-validate@${HTML_VALIDATE_VERSION} \
     mcpdoc@${MCPDOC_VERSION} \
+    @fission-ai/openspec@${OPENSPEC_VERSION} \
     sentry@${SENTRY_VERSION}
 
 # RUN claude install
