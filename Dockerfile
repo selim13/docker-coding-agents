@@ -6,7 +6,7 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.12.18
+ARG UV_VERSION=0.12.19
 # renovate: datasource=docker depName=oven/bun
 ARG BUN_VERSION=1.4.2
 
@@ -383,7 +383,7 @@ RUN set -eux; \
     rm /tmp/go.tar.gz
 
 # renovate: datasource=github-releases depName=golangci/golangci-lint extractVersion=^v(?<version>.*)$
-ENV GOLANGCI_LINT_VERSION=2.13.2
+ENV GOLANGCI_LINT_VERSION=2.14.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") goarch="arm64" ;; \
@@ -445,7 +445,7 @@ RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSE
 ARG PNPM_VERSION=12.6.0
 
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
-ARG YARN_VERSION=4.18.0
+ARG YARN_VERSION=4.18.1
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable && \
     corepack prepare pnpm@${PNPM_VERSION} --activate && pnpm -v && \
@@ -528,13 +528,13 @@ ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
 ARG OPENCODE_VERSION=1.18.32
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.156.1
+ARG CODEX_VERSION=0.157.1
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
 ARG CODEX_ACP_VERSION=1.13.1
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.281
+ARG CLAUDE_CODE_VERSION=2.1.283
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.81.1
+ARG CLAUDE_AGENT_ACP_VERSION=0.81.2
 # renovate: datasource=npm depName=@deepseek-ai/dsh
 ARG DSH_VERSION=0.1.0-rc.8
 # renovate: datasource=npm depName=@ast-grep/cli
