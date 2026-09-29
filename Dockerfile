@@ -530,7 +530,7 @@ ARG OPENCODE_VERSION=1.18.32
 # renovate: datasource=npm depName=@openai/codex
 ARG CODEX_VERSION=0.156.1
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=1.13.1
+ARG CODEX_ACP_VERSION=2.0.1
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
 ARG CLAUDE_CODE_VERSION=2.1.281
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
