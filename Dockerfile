@@ -6,7 +6,7 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.12.21
+ARG UV_VERSION=0.12.22
 # renovate: datasource=docker depName=oven/bun
 ARG BUN_VERSION=1.4.2
 
@@ -526,15 +526,15 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.18.33
+ARG OPENCODE_VERSION=1.18.34
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.159.2
+ARG CODEX_VERSION=0.160.0
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=2.0.1
+ARG CODEX_ACP_VERSION=2.1.1
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.285
+ARG CLAUDE_CODE_VERSION=2.1.287
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.84.0
+ARG CLAUDE_AGENT_ACP_VERSION=0.85.0
 # renovate: datasource=npm depName=@deepseek-ai/dsh
 ARG DSH_VERSION=0.1.0-rc.8
 # renovate: datasource=npm depName=@ast-grep/cli
@@ -544,9 +544,9 @@ ARG HTML_VALIDATE_VERSION=11.16.1
 # renovate: datasource=npm depName=mcpdoc
 ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
-ARG SENTRY_VERSION=0.45.0
+ARG SENTRY_VERSION=0.46.0
 # renovate: datasource=npm depName=@fission-ai/openspec
-ARG OPENSPEC_VERSION=1.13.2
+ARG OPENSPEC_VERSION=1.14.0
 RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
     npm install -g \
     opencode-ai@${OPENCODE_VERSION} \
