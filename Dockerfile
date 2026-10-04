@@ -6,7 +6,7 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.12.22
+ARG UV_VERSION=0.12.23
 # renovate: datasource=docker depName=oven/bun
 ARG BUN_VERSION=1.4.2
 
@@ -442,7 +442,7 @@ RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSE
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=12.8.1
+ARG PNPM_VERSION=12.9.1
 
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.18.1
@@ -532,15 +532,15 @@ ARG CODEX_VERSION=0.160.0
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
 ARG CODEX_ACP_VERSION=2.1.1
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.287
+ARG CLAUDE_CODE_VERSION=2.1.289
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.85.0
+ARG CLAUDE_AGENT_ACP_VERSION=0.85.1
 # renovate: datasource=npm depName=@deepseek-ai/dsh
 ARG DSH_VERSION=0.1.0-rc.8
 # renovate: datasource=npm depName=@ast-grep/cli
 ARG AST_GREP_CLI_VERSION=0.45.3
 # renovate: datasource=npm depName=html-validate
-ARG HTML_VALIDATE_VERSION=11.16.1
+ARG HTML_VALIDATE_VERSION=11.16.2
 # renovate: datasource=npm depName=mcpdoc
 ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
