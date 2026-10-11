@@ -6,9 +6,9 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.12.24
+ARG UV_VERSION=0.13.0
 # renovate: datasource=docker depName=oven/bun
-ARG BUN_VERSION=1.4.2
+ARG BUN_VERSION=1.4.3
 
 FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
 FROM oven/bun:${BUN_VERSION} AS bun
@@ -442,7 +442,7 @@ RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSE
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=12.10.1
+ARG PNPM_VERSION=12.11.2
 
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.18.1
@@ -526,19 +526,19 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.18.35
+ARG OPENCODE_VERSION=1.19.0
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.162.0
+ARG CODEX_VERSION=0.162.1
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=2.1.1
+ARG CODEX_ACP_VERSION=2.2.2
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.295
+ARG CLAUDE_CODE_VERSION=2.1.296
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.88.0
+ARG CLAUDE_AGENT_ACP_VERSION=0.89.1
 # renovate: datasource=npm depName=@deepseek-ai/dsh
 ARG DSH_VERSION=0.1.0-rc.8
 # renovate: datasource=npm depName=@ast-grep/cli
-ARG AST_GREP_CLI_VERSION=0.45.3
+ARG AST_GREP_CLI_VERSION=0.50.0
 # renovate: datasource=npm depName=html-validate
 ARG HTML_VALIDATE_VERSION=11.16.2
 # renovate: datasource=npm depName=mcpdoc
