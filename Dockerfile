@@ -20,7 +20,7 @@ ARG IMAGE_REVISION
 ARG IMAGE_VERSION
 
 LABEL org.opencontainers.image.title="coding-agents" \
-      org.opencontainers.image.description="Isolated environment for codex, claude, dsh and opencode." \
+      org.opencontainers.image.description="Isolated environment for codex, claude, cursor, dsh and opencode." \
       org.opencontainers.image.authors="Dmitry Seleznev <selim013@gmail.com>" \
       org.opencontainers.image.source="https://github.com/selim13/docker-coding-agents" \
       org.opencontainers.image.url="https://github.com/selim13/docker-coding-agents" \
@@ -561,6 +561,24 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
     @fission-ai/openspec@${OPENSPEC_VERSION} \
     sentry@${SENTRY_VERSION}
 
+# Versioned download URL and layout from https://cursor.com/install.
+# Release hashes have no ordering, so Renovate tracks the full release ID as a digest.
+ARG CURSOR_AGENT_VERSION=2026.10.01-e373342
+RUN set -eux; \
+    case "${TARGETARCH}" in \
+        "arm64") cursor_arch="arm64" ;; \
+        "amd64") cursor_arch="x64" ;; \
+        *) echo "Unsupported architecture: ${TARGETARCH}"; exit 1 ;; \
+    esac; \
+    cursor_dir="/home/${USERNAME}/.local/share/cursor-agent/versions/${CURSOR_AGENT_VERSION}"; \
+    mkdir -p "${cursor_dir}" /home/$USERNAME/.local/bin; \
+    curl -fsSL "https://downloads.cursor.com/lab/${CURSOR_AGENT_VERSION}/linux/${cursor_arch}/agent-cli-package.tar.gz" -o /tmp/cursor-agent.tar.gz; \
+    tar -xzf /tmp/cursor-agent.tar.gz --strip-components=1 -C "${cursor_dir}"; \
+    rm /tmp/cursor-agent.tar.gz; \
+    ln -s "${cursor_dir}/cursor-agent" /home/$USERNAME/.local/bin/agent; \
+    ln -s "${cursor_dir}/cursor-agent" /home/$USERNAME/.local/bin/cursor-agent; \
+    test "$(cursor-agent --version)" = "${CURSOR_AGENT_VERSION}"
+
 # RUN claude install
 
 USER root
@@ -575,7 +593,7 @@ RUN mkdir -p /etc/coding-agents /etc/codex /etc/claude-code && \
     "- default user: ${USERNAME} (uid/gid 1000)" \
     '' \
     '## Key Tools' \
-    "- agents: codex ${CODEX_VERSION}, claude-code ${CLAUDE_CODE_VERSION}, dsh ${DSH_VERSION}, opencode ${OPENCODE_VERSION}" \
+    "- agents: codex ${CODEX_VERSION}, claude-code ${CLAUDE_CODE_VERSION}, cursor-agent ${CURSOR_AGENT_VERSION}, dsh ${DSH_VERSION}, opencode ${OPENCODE_VERSION}" \
     '- search/edit: rg, ast-grep, jq, yq, xmlstarlet, difft, delta' \
     '- runtimes: python3, node, go, php, composer, uv, uvx, bun' \
     '- package managers: npm, pnpm, yarn, pip, composer' \

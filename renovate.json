@@ -4,6 +4,29 @@
     "config:recommended",
     "customManagers:dockerfileVersions"
   ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^Dockerfile$/"],
+      "matchStrings": [
+        "ARG CURSOR_AGENT_VERSION=(?<currentDigest>\\d{4}\\.\\d{2}\\.\\d{2}-[a-f0-9]+)"
+      ],
+      "depNameTemplate": "cursor-agent",
+      "datasourceTemplate": "custom.cursor-agent",
+      "currentValueTemplate": "latest",
+      "versioningTemplate": "exact",
+      "autoReplaceStringTemplate": "ARG CURSOR_AGENT_VERSION={{{newDigest}}}"
+    }
+  ],
+  "customDatasources": {
+    "cursor-agent": {
+      "defaultRegistryUrlTemplate": "https://formulae.brew.sh/api/cask/cursor-cli.json",
+      "format": "json",
+      "transformTemplates": [
+        "{'releases': [{'version': 'latest', 'digest': version}]}"
+      ]
+    }
+  },
   "packageRules": [
     {
       "matchFileNames": ["Dockerfile"],

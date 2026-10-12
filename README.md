@@ -5,6 +5,7 @@ An environment to run coding agents:
 - OpenCode
 - Claude Code
 - Codex
+- Cursor CLI (`agent` / `cursor-agent`)
 - DeepSeek Harness
 
 ## Quick install
@@ -43,7 +44,7 @@ xvfb-run -a --server-args="-screen 0 1920x1080x24" npx playwright test --headed
 
 ## Installed software
 
-- Agents: Codex, Claude Code, DeepSeek Harness, OpenCode, and their ACP commands.
+- Agents: Codex, Claude Code, Cursor CLI, DeepSeek Harness, OpenCode, and their ACP commands.
 - Runtimes: Python, Node.js, Go, PHP, Bun, uv, npm, pnpm, Yarn, pip, and Composer.
 - Tools: Git, Docker, Playwright with Chromium, ripgrep, ast-grep, jq, yq, Hadolint, droast, and common
   linters.
