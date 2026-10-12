@@ -23,14 +23,18 @@ curl -fsSL https://raw.githubusercontent.com/selim13/docker-coding-agents/master
 
 ```sh
 coding-agents-container.sh codex
+coding-agents-container.sh cursor
 ```
 
-A new Codex instance will be spawned inside a Docker container, with the
+The selected agent runs inside a Docker container, with the
 current working directory mounted as its working directory.
 
-By default, the container mounts your Codex, Claude Code, DeepSeek Harness, and OpenCode configuration
-directories into the container. Use `--volume` or `CODING_AGENTS_VOLUME` to override
+By default, the container mounts your Codex, Claude Code, Cursor, DeepSeek Harness, and OpenCode configuration
+directories into the container. The selected agent's directories are created if missing.
+Use `--volume` or `CODING_AGENTS_VOLUME` to override
 the paths.
+
+Cursor uses `~/.cursor`, `~/.config/cursor`, and `~/.local/state/cursor`.
 
 See `--help` for the invocation options.
 

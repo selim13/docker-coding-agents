@@ -86,6 +86,7 @@ volume_args() {
     local route
     for route in \
         'claude|claude' \
+        'cursor|cursor-agent' \
         'dsh|dsh' \
         'opencode|opencode' \
         'codex-acp|codex-acp' \
@@ -213,7 +214,7 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
 }
 
 @test "per-agent file override applies only to its agent and inherited wins" {
-    printf 'CODING_AGENTS_CODEX_HTTP_PROXY=file-proxy\nCODING_AGENTS_CODEX_TZ=UTC\nCODING_AGENTS_DSH_HTTP_PROXY=dsh-proxy\n' > "$WORKSPACE/config.env"
+    printf 'CODING_AGENTS_CODEX_HTTP_PROXY=file-proxy\nCODING_AGENTS_CODEX_TZ=UTC\nCODING_AGENTS_DSH_HTTP_PROXY=dsh-proxy\nCODING_AGENTS_CURSOR_HTTP_PROXY=cursor-file-proxy\nCODING_AGENTS_CURSOR_HTTPS_PROXY=cursor-https-proxy\nCODING_AGENTS_CURSOR_NO_PROXY=localhost\nCODING_AGENTS_CURSOR_TZ=Asia/Singapore\n' > "$WORKSPACE/config.env"
     CODING_AGENTS_CODEX_HTTP_PROXY=env-proxy run "$LAUNCHER" --workspace "$WORKSPACE" --env "$WORKSPACE/config.env" codex
     assert_success
     load_args
@@ -225,11 +226,24 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
     load_args
     assert_pair --env HTTP_PROXY=dsh-proxy
 
+    CODING_AGENTS_CURSOR_HTTP_PROXY=cursor-env-proxy run "$LAUNCHER" --workspace "$WORKSPACE" --env "$WORKSPACE/config.env" cursor --print "two words" ""
+    assert_success
+    load_args
+    assert_tail 4 cursor-agent --print "two words" ""
+    assert_pair --env HTTP_PROXY=cursor-env-proxy
+    assert_pair --env HTTPS_PROXY=cursor-https-proxy
+    assert_pair --env NO_PROXY=localhost
+    assert_pair --env TZ=Asia/Singapore
+
     run "$LAUNCHER" --workspace "$WORKSPACE" --env "$WORKSPACE/config.env" claude
     assert_success
     load_args
     refute_arg HTTP_PROXY=file-proxy
     refute_arg TZ=UTC
+    refute_arg HTTP_PROXY=cursor-file-proxy
+    refute_arg HTTPS_PROXY=cursor-https-proxy
+    refute_arg NO_PROXY=localhost
+    refute_arg TZ=Asia/Singapore
 }
 
 @test "simple named and bind volumes reach Docker" {
@@ -341,19 +355,67 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
     run "$LAUNCHER" --workspace "$WORKSPACE" codex
     assert_success
     [ ! -e "$HOME/.claude.json" ]
+    [ ! -e "$HOME/.cursor" ]
+    [ ! -e "$HOME/.config/cursor" ]
+    [ ! -e "$HOME/.local/state/cursor" ]
     [ ! -e "$HOME/.config/gitconfig-llms" ]
     load_args
     refute_arg "$HOME/.claude.json:/home/ai/.claude.json"
+    refute_arg "$HOME/.cursor:/home/ai/.cursor"
+    refute_arg "$HOME/.config/cursor:/home/ai/.config/cursor"
+    refute_arg "$HOME/.local/state/cursor:/home/ai/.local/state/cursor"
+}
+
+@test "agent commands create and mount their own missing directories" {
+    local route launcher_command directories agent_home directory unrelated
+    for route in \
+        'codex|.codex' \
+        'claude|.claude' \
+        'cursor|.cursor .config/cursor .local/state/cursor' \
+        'dsh|.dsh' \
+        'opencode|.config/opencode .local/share/opencode .local/state/opencode' \
+        'codex-acp|.codex' \
+        'claude-acp|.claude' \
+        'opencode-acp|.config/opencode .local/share/opencode .local/state/opencode'; do
+        IFS='|' read -r launcher_command directories <<< "$route"
+        agent_home=$BATS_TEST_TMPDIR/$launcher_command
+        mkdir -p "$agent_home"
+        HOME=$agent_home run "$LAUNCHER" --workspace "$WORKSPACE" "$launcher_command"
+        assert_success
+        load_args
+        for directory in $directories; do
+            [ -d "$agent_home/$directory" ]
+            assert_pair --volume "$agent_home/$directory:/home/ai/$directory"
+        done
+        for unrelated in .codex .claude .cursor .dsh .config/opencode; do
+            case " $directories " in *" $unrelated "*) continue ;; esac
+            [ ! -e "$agent_home/$unrelated" ]
+        done
+    done
+}
+
+@test "agent directory creation fails before Docker when a file blocks it" {
+    printf 'preserve me' > "$HOME/.cursor"
+    run "$LAUNCHER" --workspace "$WORKSPACE" cursor
+    assert_failure
+    [ "$(cat "$HOME/.cursor")" = 'preserve me' ]
+    [ ! -e "$DOCKER_CAPTURE" ]
 }
 
 @test "only agent state is mounted by default and volumes override it" {
-    mkdir -p "$HOME/.config/opencode" "$HOME/.codex" "$HOME/.dsh" "$HOME/.agents" "$HOME/.cache/uv"
+    mkdir -p "$HOME/.config/opencode" "$HOME/.codex" "$HOME/.cursor" "$HOME/.config/cursor" "$HOME/.local/state/cursor" "$HOME/.dsh" "$HOME/.agents" "$HOME/.cache/uv"
     run "$LAUNCHER" --workspace "$WORKSPACE" codex
     assert_success
     load_args
     assert_pair --volume "$HOME/.config/opencode:/home/ai/.config/opencode"
     assert_pair --volume "$HOME/.config/opencode:$HOME/.config/opencode"
     assert_pair --volume "$HOME/.codex:/home/ai/.codex"
+    assert_pair --volume "$HOME/.cursor:/home/ai/.cursor"
+    assert_pair --volume "$HOME/.cursor:$HOME/.cursor"
+    assert_pair --volume "$HOME/.config/cursor:/home/ai/.config/cursor"
+    assert_pair --volume "$HOME/.config/cursor:$HOME/.config/cursor"
+    assert_pair --volume "$HOME/.local/state/cursor:/home/ai/.local/state/cursor"
+    assert_pair --volume "$HOME/.local/state/cursor:$HOME/.local/state/cursor"
     assert_pair --volume "$HOME/.dsh:/home/ai/.dsh"
     assert_pair --volume "$HOME/.dsh:$HOME/.dsh"
     assert_pair --volume "$HOME/.agents:/home/ai/.agents"
@@ -366,6 +428,16 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
     load_args
     assert_pair --volume other-dsh:/home/ai/.dsh
     refute_arg "$HOME/.dsh:/home/ai/.dsh"
+
+    run "$LAUNCHER" --workspace "$WORKSPACE" --volume cursor-config:/home/ai/.cursor --volume cursor-auth:/home/ai/.config/cursor --volume cursor-state:/home/ai/.local/state/cursor cursor
+    assert_success
+    load_args
+    assert_pair --volume cursor-config:/home/ai/.cursor
+    assert_pair --volume cursor-auth:/home/ai/.config/cursor
+    assert_pair --volume cursor-state:/home/ai/.local/state/cursor
+    refute_arg "$HOME/.cursor:/home/ai/.cursor"
+    refute_arg "$HOME/.config/cursor:/home/ai/.config/cursor"
+    refute_arg "$HOME/.local/state/cursor:/home/ai/.local/state/cursor"
 }
 
 @test "X11 requires display socket and authority and no-x11 wins" {
@@ -429,6 +501,13 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
     assert_output --partial 'two\ words'
     [ ! -e "$DOCKER_CAPTURE" ]
     [ ! -e "$source" ]
+    [ ! -e "$HOME/.codex" ]
+
+    run "$LAUNCHER" --workspace "$WORKSPACE" --dry-run cursor
+    assert_success
+    [ ! -e "$HOME/.cursor" ]
+    [ ! -e "$HOME/.config/cursor" ]
+    [ ! -e "$HOME/.local/state/cursor" ]
 
     run "$LAUNCHER" --image test-image --dry-run pull
     assert_success
