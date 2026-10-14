@@ -20,7 +20,7 @@ Usage:
   $PROGRAM [OPTIONS] COMMAND [ARG...]
 
 Commands:
-  codex | claude | cursor | dsh | opencode
+  codex | claude | cursor | devin | dsh | opencode
   codex-acp | claude-acp | opencode-acp
   shell                     run zsh
   run COMMAND [ARG...]      run an arbitrary image command
@@ -172,6 +172,7 @@ known_key() {
         CODING_AGENTS_CODEX_HTTP_PROXY|CODING_AGENTS_CODEX_HTTPS_PROXY|CODING_AGENTS_CODEX_NO_PROXY|CODING_AGENTS_CODEX_TZ) return 0 ;;
         CODING_AGENTS_CLAUDE_HTTP_PROXY|CODING_AGENTS_CLAUDE_HTTPS_PROXY|CODING_AGENTS_CLAUDE_NO_PROXY|CODING_AGENTS_CLAUDE_TZ) return 0 ;;
         CODING_AGENTS_CURSOR_HTTP_PROXY|CODING_AGENTS_CURSOR_HTTPS_PROXY|CODING_AGENTS_CURSOR_NO_PROXY|CODING_AGENTS_CURSOR_TZ) return 0 ;;
+        CODING_AGENTS_DEVIN_HTTP_PROXY|CODING_AGENTS_DEVIN_HTTPS_PROXY|CODING_AGENTS_DEVIN_NO_PROXY|CODING_AGENTS_DEVIN_TZ) return 0 ;;
         CODING_AGENTS_DSH_HTTP_PROXY|CODING_AGENTS_DSH_HTTPS_PROXY|CODING_AGENTS_DSH_NO_PROXY|CODING_AGENTS_DSH_TZ) return 0 ;;
         CODING_AGENTS_OPENCODE_HTTP_PROXY|CODING_AGENTS_OPENCODE_HTTPS_PROXY|CODING_AGENTS_OPENCODE_NO_PROXY|CODING_AGENTS_OPENCODE_TZ) return 0 ;;
     esac
@@ -442,7 +443,7 @@ for file in "${env_files[@]}"; do
             CODING_AGENTS_IMAGE) cfg_image_set=1; cfg_image=$value ;;
             CODING_AGENTS_NO_X11) cfg_no_x11_set=1; cfg_no_x11=$value ;;
             CODING_AGENTS_DRY_RUN) cfg_dry_run_set=1; cfg_dry_run=$value ;;
-            CODING_AGENTS_CODEX_*|CODING_AGENTS_CLAUDE_*|CODING_AGENTS_CURSOR_*|CODING_AGENTS_DSH_*|CODING_AGENTS_OPENCODE_*) set_agent_value "$key" "$value" ;;
+            CODING_AGENTS_CODEX_*|CODING_AGENTS_CLAUDE_*|CODING_AGENTS_CURSOR_*|CODING_AGENTS_DEVIN_*|CODING_AGENTS_DSH_*|CODING_AGENTS_OPENCODE_*) set_agent_value "$key" "$value" ;;
         esac
         i=$((i + 1))
     done
@@ -531,6 +532,7 @@ case "$command_name" in
     codex) agent=CODEX; image_command=(codex "${command_args[@]}") ;;
     claude) agent=CLAUDE; image_command=(claude "${command_args[@]}") ;;
     cursor) agent=CURSOR; image_command=(cursor-agent "${command_args[@]}") ;;
+    devin) agent=DEVIN; image_command=(devin "${command_args[@]}") ;;
     dsh) agent=DSH; image_command=(dsh "${command_args[@]}") ;;
     opencode) agent=OPENCODE; image_command=(opencode "${command_args[@]}") ;;
     codex-acp) agent=CODEX; image_command=(codex-acp "${command_args[@]}") ;;
@@ -723,6 +725,7 @@ if [ "$dry_run" -eq 0 ]; then
         CODEX) mkdir -p -- "$HOME/.codex" ;;
         CLAUDE) mkdir -p -- "$HOME/.claude" ;;
         CURSOR) mkdir -p -- "$HOME/.cursor" "$HOME/.config/cursor" "$HOME/.local/state/cursor" ;;
+        DEVIN) mkdir -p -- "$HOME/.config/devin" "$HOME/.local/share/devin" ;;
         DSH) mkdir -p -- "$HOME/.dsh" ;;
         OPENCODE) mkdir -p -- "$HOME/.config/opencode" "$HOME/.local/share/opencode" "$HOME/.local/state/opencode" ;;
     esac
@@ -737,6 +740,10 @@ mount_value "$workspace"; mount_workspace=$MOUNT_VALUE
 docker_args+=(--mount "type=bind,src=$mount_workspace,dst=$mount_workspace" --workdir "$workdir")
 
 fixed_sources=(
+    "$HOME/.config/devin"
+    "$HOME/.config/devin"
+    "$HOME/.local/share/devin"
+    "$HOME/.local/share/devin"
     "$HOME/.config/opencode"
     "$HOME/.config/opencode"
     "$HOME/.local/share/opencode"
@@ -760,6 +767,10 @@ fixed_sources=(
     "$HOME/.agents"
 )
 fixed_destinations=(
+    /home/ai/.config/devin
+    "$HOME/.config/devin"
+    /home/ai/.local/share/devin
+    "$HOME/.local/share/devin"
     /home/ai/.config/opencode
     "$HOME/.config/opencode"
     /home/ai/.local/share/opencode

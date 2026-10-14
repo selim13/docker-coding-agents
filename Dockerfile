@@ -20,7 +20,7 @@ ARG IMAGE_REVISION
 ARG IMAGE_VERSION
 
 LABEL org.opencontainers.image.title="coding-agents" \
-      org.opencontainers.image.description="Isolated environment for codex, claude, cursor, dsh and opencode." \
+      org.opencontainers.image.description="Isolated environment for codex, claude, cursor, devin, dsh and opencode." \
       org.opencontainers.image.authors="Dmitry Seleznev <selim013@gmail.com>" \
       org.opencontainers.image.source="https://github.com/selim13/docker-coding-agents" \
       org.opencontainers.image.url="https://github.com/selim13/docker-coding-agents" \
@@ -267,6 +267,8 @@ RUN mkdir -p /workspace \
     /home/$USERNAME/.local/share/opencode \
     /home/$USERNAME/.local/state/opencode \
     /home/$USERNAME/.cache/opencode \
+    /home/$USERNAME/.config/devin \
+    /home/$USERNAME/.local/share/devin \
     /home/$USERNAME/.ssh \
     /home/$USERNAME/.claude \
   && chown -R $USERNAME:$USERNAME /workspace \
@@ -583,6 +585,26 @@ RUN set -eux; \
 
 USER root
 
+# Versioned bundles and checksums from https://cli.devin.ai/install.sh.
+# Keep the installation outside the host-mounted Devin data directory.
+ARG DEVIN_VERSION=3000.11.3
+RUN set -eux; \
+    case "${TARGETARCH}" in \
+        "arm64") devin_target="aarch64-unknown-linux" ;; \
+        "amd64") devin_target="x86_64-unknown-linux" ;; \
+        *) echo "Unsupported architecture: ${TARGETARCH}"; exit 1 ;; \
+    esac; \
+    curl -fsSL "https://static.devin.ai/cli/${DEVIN_VERSION}/manifest.json" -o /tmp/devin-manifest.json; \
+    url=$(jq -er --arg target "$devin_target" '.platforms[$target].url' /tmp/devin-manifest.json); \
+    checksum=$(jq -er --arg target "$devin_target" '.platforms[$target].sha256' /tmp/devin-manifest.json); \
+    curl -fsSL "$url" -o /tmp/devin.tar.gz; \
+    echo "$checksum  /tmp/devin.tar.gz" | sha256sum --check; \
+    mkdir -p /opt/devin; \
+    tar -xzf /tmp/devin.tar.gz -C /opt/devin; \
+    ln -s /opt/devin/bin/devin /usr/local/bin/devin; \
+    rm /tmp/devin.tar.gz /tmp/devin-manifest.json; \
+    devin --version | grep -F "devin ${DEVIN_VERSION} "
+
 RUN mkdir -p /etc/coding-agents /etc/codex /etc/claude-code && \
   if [ -d "$PLAYWRIGHT_BROWSERS_PATH" ]; then \
     playwright_chrome_path="$(find "$PLAYWRIGHT_BROWSERS_PATH" -type f -path '*/chrome-linux/chrome' -print | sort | tail -n 1)"; \
@@ -593,7 +615,7 @@ RUN mkdir -p /etc/coding-agents /etc/codex /etc/claude-code && \
     "- default user: ${USERNAME} (uid/gid 1000)" \
     '' \
     '## Key Tools' \
-    "- agents: codex ${CODEX_VERSION}, claude-code ${CLAUDE_CODE_VERSION}, cursor-agent ${CURSOR_AGENT_VERSION}, dsh ${DSH_VERSION}, opencode ${OPENCODE_VERSION}" \
+    "- agents: codex ${CODEX_VERSION}, claude-code ${CLAUDE_CODE_VERSION}, cursor-agent ${CURSOR_AGENT_VERSION}, devin ${DEVIN_VERSION}, dsh ${DSH_VERSION}, opencode ${OPENCODE_VERSION}" \
     '- search/edit: rg, ast-grep, jq, yq, xmlstarlet, difft, delta' \
     '- runtimes: python3, node, go, php, composer, uv, uvx, bun' \
     '- package managers: npm, pnpm, yarn, pip, composer' \

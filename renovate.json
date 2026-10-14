@@ -8,6 +8,14 @@
     {
       "customType": "regex",
       "managerFilePatterns": ["/^Dockerfile$/"],
+      "matchStrings": ["ARG DEVIN_VERSION=(?<currentValue>\\S+)"],
+      "depNameTemplate": "devin-cli",
+      "datasourceTemplate": "custom.devin-cli",
+      "versioningTemplate": "semver-coerced"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^Dockerfile$/"],
       "matchStrings": [
         "ARG CURSOR_AGENT_VERSION=(?<currentDigest>\\d{4}\\.\\d{2}\\.\\d{2}-[a-f0-9]+)"
       ],
@@ -19,6 +27,13 @@
     }
   ],
   "customDatasources": {
+    "devin-cli": {
+      "defaultRegistryUrlTemplate": "https://static.devin.ai/cli/current/manifest.json",
+      "format": "json",
+      "transformTemplates": [
+        "{'releases': [{'version': version}]}"
+      ]
+    },
     "cursor-agent": {
       "defaultRegistryUrlTemplate": "https://formulae.brew.sh/api/cask/cursor-cli.json",
       "format": "json",

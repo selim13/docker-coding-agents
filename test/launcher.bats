@@ -87,6 +87,7 @@ volume_args() {
     for route in \
         'claude|claude' \
         'cursor|cursor-agent' \
+        'devin|devin' \
         'dsh|dsh' \
         'opencode|opencode' \
         'codex-acp|codex-acp' \
@@ -358,6 +359,8 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
     [ ! -e "$HOME/.cursor" ]
     [ ! -e "$HOME/.config/cursor" ]
     [ ! -e "$HOME/.local/state/cursor" ]
+    [ ! -e "$HOME/.config/devin" ]
+    [ ! -e "$HOME/.local/share/devin" ]
     [ ! -e "$HOME/.config/gitconfig-llms" ]
     load_args
     refute_arg "$HOME/.claude.json:/home/ai/.claude.json"
@@ -372,6 +375,7 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
         'codex|.codex' \
         'claude|.claude' \
         'cursor|.cursor .config/cursor .local/state/cursor' \
+        'devin|.config/devin .local/share/devin' \
         'dsh|.dsh' \
         'opencode|.config/opencode .local/share/opencode .local/state/opencode' \
         'codex-acp|.codex' \
@@ -386,8 +390,9 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
         for directory in $directories; do
             [ -d "$agent_home/$directory" ]
             assert_pair --volume "$agent_home/$directory:/home/ai/$directory"
+            assert_pair --volume "$agent_home/$directory:$agent_home/$directory"
         done
-        for unrelated in .codex .claude .cursor .dsh .config/opencode; do
+        for unrelated in .codex .claude .cursor .config/devin .local/share/devin .dsh .config/opencode; do
             case " $directories " in *" $unrelated "*) continue ;; esac
             [ ! -e "$agent_home/$unrelated" ]
         done
@@ -400,6 +405,52 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
     assert_failure
     [ "$(cat "$HOME/.cursor")" = 'preserve me' ]
     [ ! -e "$DOCKER_CAPTURE" ]
+}
+
+@test "Devin preserves arguments and applies only its own environment overrides" {
+    printf '%s\n' \
+        'CODING_AGENTS_DEVIN_HTTP_PROXY=file-proxy' \
+        'CODING_AGENTS_DEVIN_HTTPS_PROXY=https-proxy' \
+        'CODING_AGENTS_DEVIN_NO_PROXY=localhost' \
+        'CODING_AGENTS_DEVIN_TZ=Asia/Singapore' > "$WORKSPACE/config.env"
+    CODING_AGENTS_DEVIN_HTTP_PROXY=env-proxy run "$LAUNCHER" --workspace "$WORKSPACE" --env "$WORKSPACE/config.env" devin -p "two words" ""
+    assert_success
+    load_args
+    assert_tail 4 devin -p "two words" ""
+    assert_pair --env HTTP_PROXY=env-proxy
+    assert_pair --env HTTPS_PROXY=https-proxy
+    assert_pair --env NO_PROXY=localhost
+    assert_pair --env TZ=Asia/Singapore
+
+    run "$LAUNCHER" --workspace "$WORKSPACE" --env "$WORKSPACE/config.env" claude
+    assert_success
+    load_args
+    refute_arg HTTP_PROXY=file-proxy
+    refute_arg HTTPS_PROXY=https-proxy
+    refute_arg NO_PROXY=localhost
+    refute_arg TZ=Asia/Singapore
+}
+
+@test "Devin volumes override defaults and blocked directories fail before Docker" {
+    run "$LAUNCHER" --workspace "$WORKSPACE" --volume devin-config:/home/ai/.config/devin --volume devin-data:/home/ai/.local/share/devin devin
+    assert_success
+    load_args
+    assert_pair --volume devin-config:/home/ai/.config/devin
+    assert_pair --volume devin-data:/home/ai/.local/share/devin
+    refute_arg "$HOME/.config/devin:/home/ai/.config/devin"
+    refute_arg "$HOME/.local/share/devin:/home/ai/.local/share/devin"
+
+    local directory
+    for directory in .config/devin .local/share/devin; do
+        rmdir "$HOME/$directory"
+        printf 'preserve me' > "$HOME/$directory"
+        rm -f "$DOCKER_CAPTURE"
+        run "$LAUNCHER" --workspace "$WORKSPACE" devin
+        assert_failure
+        [ "$(cat "$HOME/$directory")" = 'preserve me' ]
+        [ ! -e "$DOCKER_CAPTURE" ]
+        rm "$HOME/$directory"
+    done
 }
 
 @test "only agent state is mounted by default and volumes override it" {
@@ -508,6 +559,11 @@ A=2' 'CODING_AGENTS_ENV=again' 'CODING_AGENTS_UNKNOWN=1'; do
     [ ! -e "$HOME/.cursor" ]
     [ ! -e "$HOME/.config/cursor" ]
     [ ! -e "$HOME/.local/state/cursor" ]
+
+    run "$LAUNCHER" --workspace "$WORKSPACE" --dry-run devin
+    assert_success
+    [ ! -e "$HOME/.config/devin" ]
+    [ ! -e "$HOME/.local/share/devin" ]
 
     run "$LAUNCHER" --image test-image --dry-run pull
     assert_success

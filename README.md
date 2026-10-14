@@ -6,6 +6,7 @@ An environment to run coding agents:
 - Claude Code
 - Codex
 - Cursor CLI (`agent` / `cursor-agent`)
+- Devin CLI
 - DeepSeek Harness
 
 ## Quick install
@@ -24,17 +25,21 @@ curl -fsSL https://raw.githubusercontent.com/selim13/docker-coding-agents/master
 ```sh
 coding-agents-container.sh codex
 coding-agents-container.sh cursor
+coding-agents-container.sh devin
 ```
 
 The selected agent runs inside a Docker container, with the
 current working directory mounted as its working directory.
 
-By default, the container mounts your Codex, Claude Code, Cursor, DeepSeek Harness, and OpenCode configuration
+By default, the container mounts your Codex, Claude Code, Cursor, Devin, DeepSeek Harness, and OpenCode configuration
 directories into the container. The selected agent's directories are created if missing.
 Use `--volume` or `CODING_AGENTS_VOLUME` to override
 the paths.
 
 Cursor uses `~/.cursor`, `~/.config/cursor`, and `~/.local/state/cursor`.
+
+Devin uses `~/.config/devin` and `~/.local/share/devin` (credentials, sessions, and logs).
+Its version is pinned in the Dockerfile; Renovate tracks the official release manifest.
 
 See `--help` for the invocation options.
 
@@ -48,7 +53,7 @@ xvfb-run -a --server-args="-screen 0 1920x1080x24" npx playwright test --headed
 
 ## Installed software
 
-- Agents: Codex, Claude Code, Cursor CLI, DeepSeek Harness, OpenCode, and their ACP commands.
+- Agents: Codex, Claude Code, Cursor CLI, Devin CLI, DeepSeek Harness, OpenCode, and their ACP commands.
 - Runtimes: Python, Node.js, Go, PHP, Bun, uv, npm, pnpm, Yarn, pip, and Composer.
 - Tools: Git, Docker, Playwright with Chromium, ripgrep, ast-grep, jq, yq, Hadolint, droast, and common
   linters.
