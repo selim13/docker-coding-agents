@@ -6,7 +6,7 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.13.0
+ARG UV_VERSION=0.13.1
 # renovate: datasource=docker depName=oven/bun
 ARG BUN_VERSION=1.4.3
 
@@ -354,7 +354,7 @@ RUN set -eux; \
     rm -rf "${tmpdir}"
 
 # renovate: datasource=github-releases depName=casey/just
-ENV JUST_VERSION=1.58.0
+ENV JUST_VERSION=1.59.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") \
@@ -385,7 +385,7 @@ RUN set -eux; \
     rm /tmp/go.tar.gz
 
 # renovate: datasource=github-releases depName=golangci/golangci-lint extractVersion=^v(?<version>.*)$
-ENV GOLANGCI_LINT_VERSION=2.14.0
+ENV GOLANGCI_LINT_VERSION=2.15.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") goarch="arm64" ;; \
@@ -398,7 +398,7 @@ RUN set -eux; \
     rm -rf /tmp/golangci-lint.tar.gz "/tmp/golangci-lint-${GOLANGCI_LINT_VERSION}-linux-${goarch}"
 
 # renovate: datasource=pypi depName=playwright
-ARG PLAYWRIGHT_VERSION=1.63.0
+ARG PLAYWRIGHT_VERSION=1.64.0
 # renovate: datasource=pypi depName=markdownify
 ARG MARKDOWNIFY_VERSION=1.2.3
 # renovate: datasource=pypi depName=openpyxl
@@ -444,7 +444,7 @@ RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSE
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=12.11.2
+ARG PNPM_VERSION=12.14.0
 
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.18.1
@@ -528,27 +528,27 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.19.0
+ARG OPENCODE_VERSION=1.19.3
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.162.1
+ARG CODEX_VERSION=0.163.0
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
 ARG CODEX_ACP_VERSION=2.2.2
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.296
+ARG CLAUDE_CODE_VERSION=2.1.302
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.89.1
+ARG CLAUDE_AGENT_ACP_VERSION=0.93.0
 # renovate: datasource=npm depName=@deepseek-ai/dsh
 ARG DSH_VERSION=0.1.0-rc.8
 # renovate: datasource=npm depName=@ast-grep/cli
-ARG AST_GREP_CLI_VERSION=0.50.0
+ARG AST_GREP_CLI_VERSION=0.51.0
 # renovate: datasource=npm depName=html-validate
-ARG HTML_VALIDATE_VERSION=11.16.2
+ARG HTML_VALIDATE_VERSION=11.16.3
 # renovate: datasource=npm depName=mcpdoc
 ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
 ARG SENTRY_VERSION=0.47.0
 # renovate: datasource=npm depName=@fission-ai/openspec
-ARG OPENSPEC_VERSION=1.14.1
+ARG OPENSPEC_VERSION=1.14.3
 RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
     npm install -g \
     opencode-ai@${OPENCODE_VERSION} \
@@ -565,7 +565,7 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 # Versioned download URL and layout from https://cursor.com/install.
 # Release hashes have no ordering, so Renovate tracks the full release ID as a digest.
-ARG CURSOR_AGENT_VERSION=2026.10.01-e373342
+ARG CURSOR_AGENT_VERSION=2026.10.16-e3cb207
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") cursor_arch="arm64" ;; \
@@ -587,7 +587,7 @@ USER root
 
 # Versioned bundles and checksums from https://cli.devin.ai/install.sh.
 # Keep the installation outside the host-mounted Devin data directory.
-ARG DEVIN_VERSION=3000.11.3
+ARG DEVIN_VERSION=3000.11.92
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") devin_target="aarch64-unknown-linux" ;; \
