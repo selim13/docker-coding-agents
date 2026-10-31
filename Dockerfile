@@ -485,7 +485,7 @@ RUN printf '%s\n' \
     pnpm config set store-dir /home/ai/.local/share/pnpm/store/v${PNPM_VERSION%%.*} --global
 
 # renovate: datasource=github-releases depName=composer-unused/composer-unused
-ENV COMPOSER_UNUSED_VERSION=0.9.7
+ENV COMPOSER_UNUSED_VERSION=0.9.8
 RUN mkdir -p /home/$USERNAME/.local/bin && \
     curl -fsSL "https://github.com/composer-unused/composer-unused/releases/download/${COMPOSER_UNUSED_VERSION}/composer-unused.phar" -o /home/$USERNAME/.local/bin/composer-unused && \
     chmod 0755 /home/$USERNAME/.local/bin/composer-unused
