@@ -6,7 +6,7 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.13.5
+ARG UV_VERSION=0.13.6
 # renovate: datasource=docker depName=oven/bun
 ARG BUN_VERSION=1.4.4
 
@@ -168,7 +168,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     zsh
 
 # renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
-ARG KUBECTL_VERSION=1.37.1
+ARG KUBECTL_VERSION=1.37.2
 RUN set -eux; \
     url="https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl"; \
     curl -fsSL "${url}" -o /tmp/kubectl; \
@@ -296,7 +296,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
   rm "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb"
 
 # renovate: datasource=github-releases depName=Wilfred/difftastic
-ENV DIFFT_VERSION=0.71.0
+ENV DIFFT_VERSION=0.72.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") \
@@ -437,14 +437,14 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 # Composer
 # renovate: datasource=github-releases depName=composer/composer
-ARG COMPOSER_VERSION=2.10.3
+ARG COMPOSER_VERSION=2.11.1
 RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSER_VERSION}/composer.phar" -o /usr/local/bin/composer && \
     chmod 0755 /usr/local/bin/composer && \
     composer --version | grep -F "Composer version ${COMPOSER_VERSION}"
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=12.15.0
+ARG PNPM_VERSION=12.16.1
 
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
 ARG YARN_VERSION=4.18.1
@@ -528,15 +528,15 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.19.4
+ARG OPENCODE_VERSION=1.19.5
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.164.0
+ARG CODEX_VERSION=0.166.0
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=2.2.2
+ARG CODEX_ACP_VERSION=2.5.0
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.310
+ARG CLAUDE_CODE_VERSION=2.1.316
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.95.0
+ARG CLAUDE_AGENT_ACP_VERSION=0.99.1
 # renovate: datasource=npm depName=@deepseek-ai/dsh
 ARG DSH_VERSION=0.1.0-rc.8
 # renovate: datasource=npm depName=@ast-grep/cli
@@ -548,7 +548,7 @@ ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
 ARG SENTRY_VERSION=0.47.0
 # renovate: datasource=npm depName=@fission-ai/openspec
-ARG OPENSPEC_VERSION=1.15.0
+ARG OPENSPEC_VERSION=1.16.0
 RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
     npm install -g \
     opencode-ai@${OPENCODE_VERSION} \
@@ -587,7 +587,7 @@ USER root
 
 # Versioned bundles and checksums from https://cli.devin.ai/install.sh.
 # Keep the installation outside the host-mounted Devin data directory.
-ARG DEVIN_VERSION=3000.11.205
+ARG DEVIN_VERSION=3000.11.234
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") devin_target="aarch64-unknown-linux" ;; \
