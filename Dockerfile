@@ -548,7 +548,7 @@ ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
 ARG SENTRY_VERSION=0.47.0
 # renovate: datasource=npm depName=@fission-ai/openspec
-ARG OPENSPEC_VERSION=1.16.0
+ARG OPENSPEC_VERSION=2.0.0
 RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
     npm install -g \
     opencode-ai@${OPENCODE_VERSION} \
