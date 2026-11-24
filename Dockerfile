@@ -314,7 +314,7 @@ RUN set -eux; \
     rm -rf "${tmpdir}"
 
 # renovate: datasource=github-releases depName=BurntSushi/ripgrep
-ENV RIPGREP_VERSION=15.2.0
+ENV RIPGREP_VERSION=16.0.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") \
@@ -548,7 +548,7 @@ ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
 ARG SENTRY_VERSION=0.49.0
 # renovate: datasource=npm depName=@fission-ai/openspec
-ARG OPENSPEC_VERSION=1.17.0
+ARG OPENSPEC_VERSION=2.2.0
 RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
     npm install -g \
     opencode-ai@${OPENCODE_VERSION} \
