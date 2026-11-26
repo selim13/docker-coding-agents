@@ -6,9 +6,9 @@
 
 
 # renovate: datasource=docker depName=ghcr.io/astral-sh/uv
-ARG UV_VERSION=0.13.8
+ARG UV_VERSION=0.13.10
 # renovate: datasource=docker depName=oven/bun
-ARG BUN_VERSION=1.4.4
+ARG BUN_VERSION=1.4.5
 
 FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
 FROM oven/bun:${BUN_VERSION} AS bun
@@ -168,7 +168,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     zsh
 
 # renovate: datasource=github-releases depName=kubernetes/kubernetes extractVersion=^v(?<version>.*)$
-ARG KUBECTL_VERSION=1.37.2
+ARG KUBECTL_VERSION=1.37.3
 RUN set -eux; \
     url="https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl"; \
     curl -fsSL "${url}" -o /tmp/kubectl; \
@@ -219,7 +219,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     rm "/tmp/${deb}"
 
 # renovate: datasource=github-releases depName=restic/restic extractVersion=^v(?<version>.*)$
-ARG RESTIC_VERSION=0.19.1
+ARG RESTIC_VERSION=0.20.0
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") restic_arch="arm64" ;; \
@@ -289,7 +289,7 @@ RUN if [ -f /etc/fuse.conf ]; then \
 WORKDIR /workspace
 
 # renovate: datasource=github-releases depName=dandavison/delta
-ARG GIT_DELTA_VERSION=0.20.1
+ARG GIT_DELTA_VERSION=0.22.0
 RUN ARCH=$(dpkg --print-architecture) && \
   curl -fsSL "https://github.com/dandavison/delta/releases/download/${GIT_DELTA_VERSION}/git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" -o "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" && \
   dpkg -i "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" && \
@@ -400,7 +400,7 @@ RUN set -eux; \
 # renovate: datasource=pypi depName=playwright
 ARG PLAYWRIGHT_VERSION=1.65.2
 # renovate: datasource=pypi depName=markdownify
-ARG MARKDOWNIFY_VERSION=1.2.3
+ARG MARKDOWNIFY_VERSION=1.2.4
 # renovate: datasource=pypi depName=openpyxl
 ARG OPENPYXL_VERSION=3.1.5
 # renovate: datasource=pypi depName=pandas
@@ -437,17 +437,17 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 # Composer
 # renovate: datasource=github-releases depName=composer/composer
-ARG COMPOSER_VERSION=2.11.2
+ARG COMPOSER_VERSION=2.11.3
 RUN curl -fsSL "https://github.com/composer/composer/releases/download/${COMPOSER_VERSION}/composer.phar" -o /usr/local/bin/composer && \
     chmod 0755 /usr/local/bin/composer && \
     composer --version | grep -F "Composer version ${COMPOSER_VERSION}"
 
 # Enable corepack for pnpm and yarn
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=12.21.0
+ARG PNPM_VERSION=12.23.0
 
 # renovate: datasource=npm depName=@yarnpkg/cli-dist
-ARG YARN_VERSION=4.18.1
+ARG YARN_VERSION=4.19.0
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable && \
     corepack prepare pnpm@${PNPM_VERSION} --activate && pnpm -v && \
@@ -485,7 +485,7 @@ RUN printf '%s\n' \
     pnpm config set store-dir /home/ai/.local/share/pnpm/store/v${PNPM_VERSION%%.*} --global
 
 # renovate: datasource=github-releases depName=composer-unused/composer-unused
-ENV COMPOSER_UNUSED_VERSION=0.9.8
+ENV COMPOSER_UNUSED_VERSION=0.9.9
 RUN mkdir -p /home/$USERNAME/.local/bin && \
     curl -fsSL "https://github.com/composer-unused/composer-unused/releases/download/${COMPOSER_UNUSED_VERSION}/composer-unused.phar" -o /home/$USERNAME/.local/bin/composer-unused && \
     chmod 0755 /home/$USERNAME/.local/bin/composer-unused
@@ -528,25 +528,25 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 ENV REBUILD_HERE=1
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.19.5
+ARG OPENCODE_VERSION=1.19.6
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.169.0
+ARG CODEX_VERSION=0.172.0
 # renovate: datasource=npm depName=@agentclientprotocol/codex-acp
-ARG CODEX_ACP_VERSION=2.6.0
+ARG CODEX_ACP_VERSION=2.12.1
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.325
+ARG CLAUDE_CODE_VERSION=2.1.332
 # renovate: datasource=npm depName=@agentclientprotocol/claude-agent-acp
-ARG CLAUDE_AGENT_ACP_VERSION=0.107.1
+ARG CLAUDE_AGENT_ACP_VERSION=0.113.0
 # renovate: datasource=npm depName=@deepseek-ai/dsh
 ARG DSH_VERSION=0.1.0-rc.8
 # renovate: datasource=npm depName=@ast-grep/cli
 ARG AST_GREP_CLI_VERSION=0.51.3
 # renovate: datasource=npm depName=html-validate
-ARG HTML_VALIDATE_VERSION=11.21.1
+ARG HTML_VALIDATE_VERSION=11.23.0
 # renovate: datasource=npm depName=mcpdoc
 ARG MCPDOC_VERSION=0.0.1
 # renovate: datasource=npm depName=sentry
-ARG SENTRY_VERSION=0.49.0
+ARG SENTRY_VERSION=0.51.0
 # renovate: datasource=npm depName=@fission-ai/openspec
 ARG OPENSPEC_VERSION=1.17.0
 RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
@@ -565,7 +565,7 @@ RUN --mount=type=cache,target=/home/$USERNAME/.npm,uid=1000,gid=1000 \
 
 # Versioned download URL and layout from https://cursor.com/install.
 # Release hashes have no ordering, so Renovate tracks the full release ID as a digest.
-ARG CURSOR_AGENT_VERSION=2026.11.13-eacade1
+ARG CURSOR_AGENT_VERSION=2026.11.22-e9042b2
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") cursor_arch="arm64" ;; \
@@ -587,7 +587,7 @@ USER root
 
 # Versioned bundles and checksums from https://cli.devin.ai/install.sh.
 # Keep the installation outside the host-mounted Devin data directory.
-ARG DEVIN_VERSION=3000.12.57
+ARG DEVIN_VERSION=3000.15.14
 RUN set -eux; \
     case "${TARGETARCH}" in \
         "arm64") devin_target="aarch64-unknown-linux" ;; \
